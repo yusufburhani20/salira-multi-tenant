@@ -282,32 +282,50 @@ export default function Login({
 
             <div className="flex flex-col md:flex-row w-full max-w-4xl bg-white dark:bg-slate-800 rounded-[2rem] shadow-2xl shadow-blue-500/10 dark:shadow-none border border-white/20 dark:border-slate-700/50 h-auto md:h-[500px] relative z-10 transition-colors">
                 {/* Left Side - Welcome Panel (hidden on mobile) */}
-                <div className="hidden md:flex w-full md:w-1/2 bg-blue-600 p-10 md:p-14 flex flex-col justify-center items-center text-center text-white rounded-t-[2rem] md:rounded-tr-none md:rounded-l-[2rem] relative isolate overflow-hidden">
+                <div className="hidden md:flex w-full md:w-1/2 bg-gradient-to-br from-[#1a40b0] to-[#2563EB] p-10 md:p-14 flex-col justify-center items-start text-white rounded-t-[2rem] md:rounded-tr-none md:rounded-l-[2rem] relative isolate overflow-hidden">
                     {/* Decorative blobs inside left panel */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/20 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/20 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none" />
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-400/10 rounded-full blur-3xl -mr-10 -mt-10 pointer-events-none" />
+                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-blue-400/10 rounded-full blur-3xl -ml-10 -mb-10 pointer-events-none" />
 
-                    <img src="/images/Salira.png" alt="SALIRA Logo" className="h-20 w-auto mb-6 relative z-10" />
-                    <h1 className="text-3xl md:text-4xl font-black mb-3 relative z-10 tracking-tight">SALIRA</h1>
-                    <p className="text-xs font-bold mb-10 max-w-[280px] leading-relaxed relative z-10 text-blue-100 uppercase tracking-widest">
-                        Sistem Absensi, Logistik, Inventaris, <br /> & Rekapitulasi Akademik
-                    </p>
+                    {/* Wordmark */}
+                    <div className="mb-10 relative z-10">
+                        <span className="text-2xl font-black tracking-tight">SALIRA</span>
+                        <p className="text-[11px] font-medium text-blue-200 mt-0.5 tracking-widest uppercase">Sistem Absensi & Akademik</p>
+                    </div>
+
+                    <div className="relative z-10 mb-8">
+                        <h1 className="text-3xl md:text-4xl font-black mb-3 tracking-tight leading-tight">Selamat Datang<br/>di SALIRA</h1>
+                        <p className="text-sm text-blue-100 opacity-80 max-w-[260px] leading-relaxed">
+                            Platform manajemen sekolah modern dan terpadu.
+                        </p>
+                    </div>
+
+                    {/* Feature cards */}
+                    <div className="relative z-10 grid grid-cols-3 gap-2 w-full mb-10">
+                        {[{icon: '✓', title: 'Absensi Digital', sub: 'Guru & Siswa'}, {icon: '📊', title: 'Laporan Akademik', sub: 'Rekapitulasi'}, {icon: '📅', title: 'Manajemen Event', sub: 'Kegiatan'}].map(f => (
+                            <div key={f.title} className="bg-white/10 border border-white/20 rounded-xl p-3">
+                                <div className="text-lg mb-1">{f.icon}</div>
+                                <p className="text-[11px] font-bold leading-tight">{f.title}</p>
+                                <p className="text-[10px] text-blue-200 mt-0.5">{f.sub}</p>
+                            </div>
+                        ))}
+                    </div>
+
                     <Link
                         href={route('register')}
-                        className="border border-white/50 text-white hover:bg-white hover:text-blue-700 transition-colors rounded-xl px-12 py-3 font-bold text-xs uppercase tracking-wider relative z-10 backdrop-blur-sm"
+                        className="relative z-10 border border-white/40 text-white hover:bg-white hover:text-blue-700 transition-colors rounded-xl px-10 py-2.5 font-bold text-xs uppercase tracking-wider backdrop-blur-sm"
                     >
-                        DAFTAR
+                        Daftar Akun
                     </Link>
                 </div>
 
                 {/* Right Side - Login Form */}
                 <div className="w-full md:w-1/2 p-10 md:p-14 flex flex-col justify-center bg-white dark:bg-slate-800 rounded-[2rem] md:rounded-l-none transition-colors">
-                    {/* Compact logo for mobile view only */}
+                    {/* Compact wordmark for mobile view only */}
                     <div className="flex flex-col items-center md:hidden mb-6 text-center">
-                        <img src="/images/Salira.png" alt="SALIRA Logo" className="h-14 w-auto mb-2 drop-shadow-md" />
-                        <h1 className="text-2xl font-black text-blue-600 dark:text-blue-400 tracking-tight">SALIRA</h1>
-                        <p className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest leading-relaxed">
-                            Absensi, Logistik & Inventaris
+                        <h1 className="text-3xl font-black text-blue-700 dark:text-blue-400 tracking-tight">SALIRA</h1>
+                        <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-widest mt-0.5">
+                            Sistem Absensi & Akademik
                         </p>
                     </div>
 
@@ -434,7 +452,7 @@ export default function Login({
                                 setSelectedUserName('');
                                 setShowEventModal(true);
                             }}
-                            className="mt-3 block text-center w-full py-3 text-xs font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 dark:bg-emerald-950/30 dark:text-emerald-400 dark:hover:bg-emerald-950/50 rounded-xl transition-colors uppercase tracking-wider shadow-md shadow-emerald-500/5"
+                            className="mt-3 block text-center w-full py-3 text-xs font-bold text-blue-700 bg-blue-100 hover:bg-blue-200 border border-blue-300 dark:bg-blue-950/30 dark:text-blue-400 dark:hover:bg-blue-950/50 dark:border-blue-800 rounded-xl transition-colors uppercase tracking-wider"
                         >
                             Absen Event Rapat / Kegiatan 📅
                         </button>

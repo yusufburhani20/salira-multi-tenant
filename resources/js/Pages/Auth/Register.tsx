@@ -52,7 +52,12 @@ export default function Register() {
                         <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-400/10 rounded-full" />
                     </div>
                     <div className="relative z-10">
-                        <p className="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-1">SALIRA</p>
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                            </div>
+                            <p className="text-blue-200 text-xs font-semibold uppercase tracking-widest">SALIRA</p>
+                        </div>
                         <h1 className="text-white text-2xl font-black tracking-tight leading-tight">Buat Akun Baru</h1>
                         <p className="text-blue-100/80 text-sm mt-1">Registrasi Guru & Staff</p>
                     </div>
@@ -205,8 +210,15 @@ export default function Register() {
                         </div>
 
                         <div className="relative z-10">
-                            <p className="text-white font-black text-xl tracking-tight">SALIRA</p>
-                            <p className="text-blue-200 text-[11px] font-medium tracking-widest uppercase mt-0.5">Sistem Absensi & Akademik</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/10 shadow-lg">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                </div>
+                                <div>
+                                    <p className="text-white font-black text-2xl tracking-tight leading-none">SALIRA</p>
+                                    <p className="text-blue-200 text-[11px] font-medium tracking-widest uppercase mt-1">Sistem Absensi & Akademik</p>
+                                </div>
+                            </div>
                         </div>
 
                         <div className="relative z-10">

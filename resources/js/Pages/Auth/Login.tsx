@@ -1,4 +1,4 @@
-﻿import Checkbox from '@/Components/Checkbox';
+import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler, useState, useEffect, useRef } from 'react';
@@ -283,8 +283,13 @@ export default function Login({
                         <div className="absolute -bottom-10 -left-10 w-64 h-64 bg-blue-400/10 rounded-full" />
                     </div>
                     <div className="relative z-10">
-                        <p className="text-blue-200 text-xs font-semibold uppercase tracking-widest mb-1">SALIRA</p>
-                        <h1 className="text-white text-3xl font-black tracking-tight leading-tight">Selamat Datang ðŸ‘‹</h1>
+                        <div className="flex items-center gap-2 mb-1">
+                            <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center backdrop-blur-sm">
+                                <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                            </div>
+                            <p className="text-blue-200 text-xs font-semibold uppercase tracking-widest">SALIRA</p>
+                        </div>
+                        <h1 className="text-white text-3xl font-black tracking-tight leading-tight">Selamat Datang</h1>
                         <p className="text-blue-100/80 text-sm mt-1">Masuk untuk melanjutkan.</p>
                     </div>
                 </div>
@@ -402,8 +407,15 @@ export default function Login({
 
                         {/* Wordmark */}
                         <div className="relative z-10">
-                            <p className="text-white font-black text-xl tracking-tight">SALIRA</p>
-                            <p className="text-blue-200 text-[11px] font-medium tracking-widest uppercase mt-0.5">Sistem Absensi & Akademik</p>
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/10 shadow-lg">
+                                    <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                                </div>
+                                <div>
+                                    <p className="text-white font-black text-2xl tracking-tight leading-none">SALIRA</p>
+                                    <p className="text-blue-200 text-[11px] font-medium tracking-widest uppercase mt-1">Sistem Absensi & Akademik</p>
+                                </div>
+                            </div>
                         </div>
 
                         {/* Hero text */}
@@ -413,9 +425,13 @@ export default function Login({
 
                             {/* Feature mini-cards */}
                             <div className="grid grid-cols-3 gap-2 mb-8">
-                                {[{icon:'âœ“',title:'Absensi',sub:'Digital'},{icon:'ðŸ“Š',title:'Laporan',sub:'Akademik'},{icon:'ðŸ“…',title:'Event',sub:'Kegiatan'}].map(f => (
-                                    <div key={f.title} className="bg-white/10 border border-white/20 rounded-xl p-3">
-                                        <div className="text-base mb-1">{f.icon}</div>
+                                {[
+                                    {icon:<svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>, title:'Absensi', sub:'Digital'},
+                                    {icon:<svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>, title:'Laporan', sub:'Akademik'},
+                                    {icon:<svg className="w-5 h-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>, title:'Event', sub:'Kegiatan'}
+                                ].map(f => (
+                                    <div key={f.title} className="bg-white/10 border border-white/20 rounded-xl p-3 text-center">
+                                        <div className="text-white mb-1">{f.icon}</div>
                                         <p className="text-[11px] font-bold text-white">{f.title}</p>
                                         <p className="text-[10px] text-blue-200">{f.sub}</p>
                                     </div>

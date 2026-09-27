@@ -367,9 +367,9 @@ export default function Scanner() {
                 <Head title="Terminal Presensi" />
                 <div className="w-full flex justify-center mb-6">
                     <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/5 shadow-lg">
-                            <span className="text-white font-black text-3xl">S</span>
-                        </div>
+                        <svg className="w-10 h-10 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
+                        </svg>
                         <div className="flex flex-col items-start">
                             <p className="text-white font-black text-3xl tracking-tight leading-none">SALIRA</p>
                             <p className="text-slate-400 text-[11px] font-bold tracking-widest uppercase mt-1">Absensi Digital</p>

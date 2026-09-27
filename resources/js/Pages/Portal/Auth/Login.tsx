@@ -36,10 +36,10 @@ export default function PortalLogin() {
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-1">
-                            <div className="w-6 h-6 rounded bg-white/20 flex items-center justify-center backdrop-blur-sm">
-                                <span className="text-white font-black text-sm">S</span>
-                            </div>
-                            <p className="text-blue-200 text-xs font-semibold uppercase tracking-widest">PORTAL SALIRA</p>
+                            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
+                            </svg>
+                            <p className="text-blue-100 text-xs font-semibold uppercase tracking-widest">PORTAL SALIRA</p>
                         </div>
                         <h1 className="text-white text-3xl font-black tracking-tight leading-tight">Selamat Datang 👋</h1>
                         <p className="text-blue-100/80 text-sm mt-1">Masuk untuk Siswa & Wali Murid.</p>
@@ -135,15 +135,14 @@ export default function PortalLogin() {
                         </div>
 
                         {/* Wordmark */}
-                        <div className="relative z-10">
-                            <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center backdrop-blur-sm border border-white/10 shadow-lg">
-                                    <span className="text-white font-black text-2xl">S</span>
-                                </div>
-                                <div>
-                                    <p className="text-white font-black text-2xl tracking-tight leading-none">PORTAL</p>
-                                    <p className="text-blue-200 text-[11px] font-medium tracking-widest uppercase mt-1">Siswa & Wali Murid</p>
-                                </div>
+                        <div className="relative z-10 mb-8">
+                            <div className="flex items-center gap-4">
+                                <h1 className="text-white font-black text-4xl tracking-tight">SALIRA</h1>
+                                <div className="w-px h-10 bg-white/30"></div>
+                                <p className="text-blue-100 text-[11px] leading-relaxed font-medium">
+                                    Sistem Absensi, Logistik, Inventaris<br />
+                                    & Rekapitulasi Akademik
+                                </p>
                             </div>
                         </div>
 
@@ -174,6 +173,12 @@ export default function PortalLogin() {
 
                     {/* Right — Login Form */}
                     <div className="w-7/12 bg-white dark:bg-slate-800 p-10 flex flex-col justify-center">
+                        <div className="flex items-center gap-2 mb-10 mx-auto">
+                            <svg className="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
+                            </svg>
+                            <span className="text-blue-900 dark:text-white font-black text-2xl tracking-tight">SALIRA</span>
+                        </div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-1">Masuk</h2>
                         <p className="text-sm text-slate-500 dark:text-slate-400 mb-7">Gunakan NISN dan Password.</p>
 

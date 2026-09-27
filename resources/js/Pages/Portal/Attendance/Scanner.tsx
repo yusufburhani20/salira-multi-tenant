@@ -368,7 +368,7 @@ export default function Scanner() {
                 <div className="w-full flex justify-center mb-6">
                     <div className="flex items-center gap-3">
                         <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center backdrop-blur-sm border border-white/5 shadow-lg">
-                            <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M 16 8 A 4 4 0 0 0 8 8 C 8 12 16 12 16 16 A 4 4 0 0 1 8 16" /></svg>
+                            <span className="text-white font-black text-3xl">S</span>
                         </div>
                         <div className="flex flex-col items-start">
                             <p className="text-white font-black text-3xl tracking-tight leading-none">SALIRA</p>

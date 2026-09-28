@@ -20,11 +20,12 @@ use Maatwebsite\Excel\Facades\Excel;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\Setting;
 
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Http\Controllers\Concerns\ResolvesActiveSemester;
 
 class RecapController extends Controller
 {
-    use ResolvesActiveSemester;
+    use ResolvesActiveSemester, HasSchoolScope;
 
     public function index()
     {
@@ -45,7 +46,10 @@ class RecapController extends Controller
                 ];
             });
         $activeSemester = $this->getActiveSemester();
-        $teachers = \App\Models\User::role(['Guru', 'Wali Kelas', 'Super Admin'])->orderBy('name')->get(['id', 'name']);
+        $teachers = \App\Models\User::role(['Guru', 'Wali Kelas', 'Super Admin'])
+            ->when($this->schoolId(), fn($q) => $q->where('users.school_id', $this->schoolId()))
+            ->orderBy('name')
+            ->get(['id', 'name']);
         
         return Inertia::render('Admin/Reports/Index', [
             'classes' => $classes,

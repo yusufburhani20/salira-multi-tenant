@@ -53,11 +53,17 @@ class LeaderDashboardController extends Controller
         });
 
         // 2. Statistik Kehadiran Guru Hari Ini
-        $totalTeachers = User::role(['Guru', 'Wali Kelas'])->count();
+        $schoolId = $this->schoolId();
+        $totalTeachers = User::role(['Guru', 'Wali Kelas'])
+            ->when($schoolId, fn($q) => $q->where('users.school_id', $schoolId))
+            ->count();
         $teacherPresenceCount = Attendance::whereDate('date', $today)
             ->whereNotNull('check_in')
-            ->whereHas('user', function($query) {
+            ->whereHas('user', function ($query) use ($schoolId) {
                 $query->role(['Guru', 'Wali Kelas']);
+                if ($schoolId) {
+                    $query->where('school_id', $schoolId);
+                }
             })
             ->count();
 

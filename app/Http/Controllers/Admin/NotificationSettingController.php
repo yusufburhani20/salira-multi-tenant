@@ -13,9 +13,11 @@ use App\Models\User;
 use App\Models\Student;
 use Spatie\Permission\Models\Role;
 use App\Notifications\GeneralBroadcastPushNotification;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 
 class NotificationSettingController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         $settings = [
@@ -252,27 +254,39 @@ class NotificationSettingController extends Controller
 
         if ($target === 'all') {
             // Broadcast to all active users and students who have subscriptions
-            $users = User::where('status', 'active')->whereHas('pushSubscriptions')->get();
+            $users = User::where('status', 'active')
+                ->when($this->schoolId(), fn($q) => $q->where('school_id', $this->schoolId()))
+                ->whereHas('pushSubscriptions')
+                ->get();
             foreach ($users as $user) {
                 $user->notify(new GeneralBroadcastPushNotification($title, $body, $actionUrl));
                 $count++;
             }
 
-            $students = Student::where('status', 'active')->whereHas('pushSubscriptions')->get();
+            $students = Student::where('status', 'active')
+                ->when($this->schoolId(), fn($q) => $q->where('school_id', $this->schoolId()))
+                ->whereHas('pushSubscriptions')
+                ->get();
             foreach ($students as $student) {
                 $student->notify(new GeneralBroadcastPushNotification($title, $body, $actionUrl));
                 $count++;
             }
         } elseif ($target === 'students') {
             // Only active students
-            $students = Student::where('status', 'active')->whereHas('pushSubscriptions')->get();
+            $students = Student::where('status', 'active')
+                ->when($this->schoolId(), fn($q) => $q->where('school_id', $this->schoolId()))
+                ->whereHas('pushSubscriptions')
+                ->get();
             foreach ($students as $student) {
                 $student->notify(new GeneralBroadcastPushNotification($title, $body, $actionUrl));
                 $count++;
             }
         } elseif ($target === 'users') {
             // All active staff/teachers
-            $users = User::where('status', 'active')->whereHas('pushSubscriptions')->get();
+            $users = User::where('status', 'active')
+                ->when($this->schoolId(), fn($q) => $q->where('school_id', $this->schoolId()))
+                ->whereHas('pushSubscriptions')
+                ->get();
             foreach ($users as $user) {
                 $user->notify(new GeneralBroadcastPushNotification($title, $body, $actionUrl));
                 $count++;
@@ -283,6 +297,7 @@ class NotificationSettingController extends Controller
 
             $users = User::role($roleName)
                 ->where('status', 'active')
+                ->when($this->schoolId(), fn($q) => $q->where('school_id', $this->schoolId()))
                 ->whereHas('pushSubscriptions')
                 ->get();
 

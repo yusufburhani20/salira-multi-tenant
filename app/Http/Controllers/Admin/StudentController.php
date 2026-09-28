@@ -160,7 +160,7 @@ class StudentController extends Controller
 
     public function export()
     {
-        return Excel::download(new StudentsExport(), 'data-siswa-' . now()->format('Ymd') . '.xlsx');
+        return Excel::download(new StudentsExport($this->schoolId()), 'data-siswa-' . now()->format('Ymd') . '.xlsx');
     }
 
     public function import(Request $request)

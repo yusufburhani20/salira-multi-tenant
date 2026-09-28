@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Attendance;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -13,9 +14,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class AttendanceController extends Controller
 {
+    use HasSchoolScope;
+
     public function index(Request $request)
     {
-        $query = Attendance::with('user');
+        $schoolId = $this->schoolId();
+        $query = Attendance::with('user')
+            ->join('users', 'attendances.user_id', '=', 'users.id')
+            ->when($schoolId, fn($q) => $q->where('users.school_id', $schoolId))
+            ->select('attendances.*');
 
         if ($request->has(['start_date', 'end_date'])) {
             $query->whereBetween('date', [$request->start_date, $request->end_date]);
@@ -34,17 +41,22 @@ class AttendanceController extends Controller
         $startDate = $request->query('start_date', Carbon::now()->startOfMonth()->toDateString());
         $endDate = $request->query('end_date', Carbon::now()->endOfMonth()->toDateString());
 
-        return Excel::download(new AttendanceExport($startDate, $endDate), "Laporan_Absensi_{$startDate}_sd_{$endDate}.xlsx");
+        return Excel::download(
+            new AttendanceExport($startDate, $endDate, $this->schoolId()),
+            "Laporan_Absensi_{$startDate}_sd_{$endDate}.xlsx"
+        );
     }
 
     public function exportPdf(Request $request)
     {
+        $schoolId  = $this->schoolId();
         $startDate = $request->query('start_date', Carbon::now()->startOfMonth()->toDateString());
-        $endDate = $request->query('end_date', Carbon::now()->endOfMonth()->toDateString());
+        $endDate   = $request->query('end_date', Carbon::now()->endOfMonth()->toDateString());
 
         $attendances = Attendance::with('user')
             ->whereBetween('date', [$startDate, $endDate])
             ->join('users', 'attendances.user_id', '=', 'users.id')
+            ->when($schoolId, fn($q) => $q->where('users.school_id', $schoolId))
             ->orderBy('users.name', 'asc')
             ->orderBy('attendances.date', 'asc')
             ->select('attendances.*')

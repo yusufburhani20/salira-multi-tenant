@@ -10,9 +10,14 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class StudentsExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
+    public function __construct(private ?int $schoolId = null) {}
+
     public function collection()
     {
-        return Student::with('academicClasses')->orderBy('name')->get();
+        return Student::with('academicClasses')
+            ->when($this->schoolId, fn($q) => $q->where('school_id', $this->schoolId))
+            ->orderBy('name')
+            ->get();
     }
 
     public function headings(): array

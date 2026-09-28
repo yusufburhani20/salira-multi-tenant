@@ -10,9 +10,14 @@ use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 class UsersExport implements FromCollection, WithHeadings, WithMapping, ShouldAutoSize
 {
+    public function __construct(private ?int $schoolId = null) {}
+
     public function collection()
     {
-        return User::with('roles')->latest()->get();
+        return User::with('roles')
+            ->when($this->schoolId, fn($q) => $q->where('school_id', $this->schoolId))
+            ->latest()
+            ->get();
     }
 
     public function headings(): array

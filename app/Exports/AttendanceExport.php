@@ -13,11 +13,13 @@ class AttendanceExport implements FromQuery, WithHeadings, WithMapping, WithStyl
 {
     protected $startDate;
     protected $endDate;
+    protected ?int $schoolId;
 
-    public function __construct($startDate, $endDate)
+    public function __construct($startDate, $endDate, ?int $schoolId = null)
     {
         $this->startDate = $startDate;
-        $this->endDate = $endDate;
+        $this->endDate   = $endDate;
+        $this->schoolId  = $schoolId;
     }
 
     public function query()
@@ -26,6 +28,7 @@ class AttendanceExport implements FromQuery, WithHeadings, WithMapping, WithStyl
             ->with('user')
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->join('users', 'attendances.user_id', '=', 'users.id')
+            ->when($this->schoolId, fn($q) => $q->where('users.school_id', $this->schoolId))
             ->orderBy('users.name', 'asc')
             ->orderBy('attendances.date', 'asc')
             ->select('attendances.*');

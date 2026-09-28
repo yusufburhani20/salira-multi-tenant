@@ -137,7 +137,7 @@ class UserController extends Controller
 
     public function export()
     {
-        return Excel::download(new UsersExport(), 'data-user-' . now()->format('Ymd') . '.xlsx');
+        return Excel::download(new UsersExport($this->schoolId()), 'data-user-' . now()->format('Ymd') . '.xlsx');
     }
 
     public function import(Request $request)

@@ -9,6 +9,7 @@ export default function PortalLayout({ header, children }: PropsWithChildren<{ h
     const student = props.auth?.user as any;
     const flash = props.flash as any;
     const notifications = props.notifications as any;
+    const school = (props as any).school as { name: string; logo: string | null; object: any };
 
     const handleBellClick = () => {
         if (notifications?.unreadCount > 0) {
@@ -116,10 +117,14 @@ export default function PortalLayout({ header, children }: PropsWithChildren<{ h
                 {/* Logo Area */}
                 <div className={`flex h-16 items-center ${sidebarCollapsed ? 'justify-center' : 'justify-between px-5'} border-b border-slate-100 flex-shrink-0 bg-blue-600 overflow-hidden transition-all duration-300`}>
                     <Link href={route('portal.dashboard')} className="flex items-center gap-2" onClick={() => setSidebarOpen(false)}>
-                        <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-7 w-auto flex-shrink-0" />
+                        {school?.logo ? (
+                            <img src={school.logo} alt="Logo Sekolah" className="h-7 w-auto flex-shrink-0 object-contain" />
+                        ) : (
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-7 w-auto flex-shrink-0" />
+                        )}
                         {!sidebarCollapsed && (
-                            <span className="text-xl font-bold border-white text-white whitespace-nowrap">
-                                PORTAL
+                            <span className="text-xl font-bold border-white text-white whitespace-nowrap truncate max-w-[130px]">
+                                {school?.name ? school.name.split(' ')[0] : 'PORTAL'}
                             </span>
                         )}
                     </Link>

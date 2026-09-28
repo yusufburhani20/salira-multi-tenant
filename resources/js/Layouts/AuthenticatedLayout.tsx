@@ -14,7 +14,8 @@ export default function Authenticated({
 }: PropsWithChildren<{ header?: ReactNode }>) {
     const { props } = usePage();
     const flash = props.flash as any;
-    const user = props.auth.user as any; 
+    const user = props.auth.user as any;
+    const school = (props as any).school as { name: string; logo: string | null; object: any };
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const { vapid_public_key } = props as any;
@@ -514,10 +515,14 @@ export default function Authenticated({
                 {/* Logo Area */}
                 <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-700/60 flex-shrink-0 overflow-hidden">
                     <Link href={route('dashboard')} className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
-                        <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-8 w-8 flex-shrink-0" />
+                        {school?.logo ? (
+                            <img src={school.logo} alt="Logo Sekolah" className="h-8 w-8 flex-shrink-0 object-contain rounded" />
+                        ) : (
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-8 w-8 flex-shrink-0" />
+                        )}
                         {!sidebarCollapsed && (
-                            <span className="text-xl font-black tracking-tighter text-indigo-600 dark:text-indigo-400 whitespace-nowrap">
-                                SALIRA
+                            <span className="text-xl font-black tracking-tighter text-indigo-600 dark:text-indigo-400 whitespace-nowrap truncate max-w-[140px]" title={school?.name}>
+                                {school?.name || 'SALIRA'}
                             </span>
                         )}
                     </Link>
@@ -624,8 +629,12 @@ export default function Authenticated({
                     </button>
 
                     <div className="lg:hidden flex items-center gap-2">
-                        <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-7 w-auto" />
-                        <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400">SALIRA</span>
+                        {school?.logo ? (
+                            <img src={school.logo} alt="Logo Sekolah" className="h-7 w-auto object-contain rounded" />
+                        ) : (
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-7 w-auto" />
+                        )}
+                        <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400 truncate max-w-[120px]">{school?.name || 'SALIRA'}</span>
                     </div>
 
                     {header && (

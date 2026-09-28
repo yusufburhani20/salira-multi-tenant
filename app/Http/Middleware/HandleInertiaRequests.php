@@ -5,6 +5,9 @@ namespace App\Http\Middleware;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 
+use App\Models\Setting;
+use App\Models\School;
+
 class HandleInertiaRequests extends Middleware
 {
     /**
@@ -31,7 +34,19 @@ class HandleInertiaRequests extends Middleware
     {
         // Detect user from either default 'web' guard or 'student' guard
         $user = $request->user() ?: $request->user('student');
-        
+
+        // Resolve school branding per logged-in user's school
+        $schoolName = Setting::get('school_name', 'SALIRA');
+        $schoolLogo = Setting::get('school_logo')
+            ? asset('storage/' . Setting::get('school_logo'))
+            : null;
+
+        // Pass school object for display (e.g. type badge in sidebar)
+        $school = null;
+        if ($user && isset($user->school_id) && $user->school_id) {
+            $school = School::find($user->school_id, ['id', 'name', 'type', 'logo']);
+        }
+
         return [
             ...parent::share($request),
             'auth' => [
@@ -40,13 +55,18 @@ class HandleInertiaRequests extends Middleware
                     'avatar_url' => isset($user->avatar) ? asset('storage/' . $user->avatar) : null,
                 ]) : null,
             ],
+            'school' => [
+                'name'   => $schoolName,
+                'logo'   => $schoolLogo,
+                'object' => $school,
+            ],
             'notifications' => [
                 'unreadCount' => $user ? $user->unreadNotifications()->count() : 0,
                 'recent' => $user ? $user->notifications()->take(5)->get() : [],
             ],
             'flash' => [
-                'success' => $request->session()->get('success'),
-                'error' => $request->session()->get('error'),
+                'success'     => $request->session()->get('success'),
+                'error'       => $request->session()->get('error'),
                 'ticket_code' => $request->session()->get('ticket_code'),
             ],
             'csrf_token' => csrf_token(),

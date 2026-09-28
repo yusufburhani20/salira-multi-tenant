@@ -21,26 +21,30 @@ return new class extends Migration
     public function up(): void
     {
         // ── users ─────────────────────────────────────────────────────────────
-        Schema::table('users', function (Blueprint $table) {
-            $table->foreignId('school_id')
-                  ->nullable()                        // NULL = Super Admin Yayasan (akses semua)
-                  ->after('id')
-                  ->constrained('schools')
-                  ->nullOnDelete();
+        if (! Schema::hasColumn('users', 'school_id')) {
+            Schema::table('users', function (Blueprint $table) {
+                $table->foreignId('school_id')
+                      ->nullable()                        // NULL = Super Admin Yayasan (akses semua)
+                      ->after('id')
+                      ->constrained('schools')
+                      ->nullOnDelete();
 
-            $table->index('school_id', 'idx_users_school_id');
-        });
+                $table->index('school_id', 'idx_users_school_id');
+            });
+        }
 
         // ── students ──────────────────────────────────────────────────────────
-        Schema::table('students', function (Blueprint $table) {
-            $table->foreignId('school_id')
-                  ->nullable()                        // Nullable untuk keamanan saat migrasi data awal
-                  ->after('id')
-                  ->constrained('schools')
-                  ->nullOnDelete();
+        if (! Schema::hasColumn('students', 'school_id')) {
+            Schema::table('students', function (Blueprint $table) {
+                $table->foreignId('school_id')
+                      ->nullable()                        // Nullable untuk keamanan saat migrasi data awal
+                      ->after('id')
+                      ->constrained('schools')
+                      ->nullOnDelete();
 
-            $table->index('school_id', 'idx_students_school_id');
-        });
+                $table->index('school_id', 'idx_students_school_id');
+            });
+        }
     }
 
     public function down(): void

@@ -12,7 +12,7 @@ class DriveFolder extends Model
 
     use BelongsToSchool;
 
-    protected $fillable = ['owner_type', 'owner_id', 'name', 'parent_id', 'is_public', 'public_token'];
+    protected $fillable = ['owner_type', 'owner_id', 'name', 'parent_id', 'is_public', 'public_token', 'school_id'];
 
     public function generatePublicToken()
     {

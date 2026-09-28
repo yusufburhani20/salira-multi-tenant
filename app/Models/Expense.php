@@ -13,8 +13,6 @@ class Expense extends Model
         'category_id', 'amount', 'date', 'description', 'recorded_by', 'attachment'
     ];
 
-    use BelongsToSchool;
-
     protected $casts = [
         'date' => 'date',
         'amount' => 'decimal:2',

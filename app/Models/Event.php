@@ -10,8 +10,6 @@ class Event extends Model
 {
     use HasFactory;
 
-    use BelongsToSchool;
-
     protected $fillable = [
         'name',
         'description',

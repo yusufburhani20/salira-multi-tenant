@@ -15,8 +15,6 @@ class Bill extends Model
         'payment_method', 'admin_fee', 'midtrans_order_id',
     ];
 
-    use BelongsToSchool;
-
     protected $casts = [
         'paid_at'               => 'datetime',
         'snap_token_expires_at' => 'datetime',

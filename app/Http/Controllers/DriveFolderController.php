@@ -6,8 +6,11 @@ use App\Models\DriveFolder;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
+use App\Http\Controllers\Concerns\HasSchoolScope;
+
 class DriveFolderController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request, $id = null)
     {
         $user = $request->user() ?? auth('student')->user();
@@ -118,9 +121,10 @@ class DriveFolderController extends Controller
 
         DriveFolder::create([
             'owner_type' => get_class($user),
-            'owner_id' => $user->id,
-            'name' => $request->name,
-            'parent_id' => $request->parent_id
+            'owner_id'   => $user->id,
+            'name'       => $request->name,
+            'parent_id'  => $request->parent_id,
+            'school_id'  => $this->schoolId(),
         ]);
 
         return back()->with('success', 'Folder berhasil dibuat.');

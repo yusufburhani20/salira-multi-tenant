@@ -12,7 +12,6 @@ class InventoryItem extends Model
     use BelongsToSchool;
 
     protected $guarded = ['id'];
-    use BelongsToSchool;
 
     protected $casts = [
         'condition' => InventoryCondition::class,

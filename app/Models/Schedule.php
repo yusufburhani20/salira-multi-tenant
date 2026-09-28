@@ -11,7 +11,6 @@ class Schedule extends Model
     use BelongsToSchool;
 
     protected $guarded = ['id'];
-    use BelongsToSchool;
 
     protected $casts = [
         'day' => DayOfWeek::class,

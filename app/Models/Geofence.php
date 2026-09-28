@@ -10,7 +10,6 @@ class Geofence extends Model
     use BelongsToSchool;
 
     protected $guarded = ['id'];
-    use BelongsToSchool;
 
     protected $casts = [
         'is_active' => 'boolean',

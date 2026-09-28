@@ -31,7 +31,7 @@ class Setting extends Model
      */
     protected static function resolveSchoolId(): ?int
     {
-        return auth()->check() ? auth()->user()->school_id : null;
+        return auth()->hasUser() ? auth()->user()->school_id : null;
     }
 
     /**

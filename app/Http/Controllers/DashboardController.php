@@ -28,6 +28,7 @@ class DashboardController extends Controller
 
         $today = Carbon::today();
         $classId = $request->academic_class_id;
+        $schoolId = $this->schoolId();
 
         // 0. Classes for Filter
         $classes = \App\Models\AcademicClass::all();
@@ -38,34 +39,37 @@ class DashboardController extends Controller
                 'students' => fn($q) => $q->wherePivot('is_active', true)->select('students.id'),
             ])->get();
 
-            // Get today's attendance grouped by class and student
-            $todayAttendancesByClass = \App\Models\StudentAttendance::whereDate('date', $today)
-                ->get()
-                ->groupBy('academic_class_id');
+            $studentsPerClassCacheKey = 'dashboard_studentsPerClass_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_' . ($classId ?: 'all');
+            $studentsPerClass = Cache::remember($studentsPerClassCacheKey, 300, function () use ($allClasses, $today) {
+                // Get today's attendance grouped by class and student
+                $todayAttendancesByClass = \App\Models\StudentAttendance::whereDate('date', $today)
+                    ->get()
+                    ->groupBy('academic_class_id');
 
-            $studentsPerClass = $allClasses->map(function ($class) use ($todayAttendancesByClass) {
-                $totalStudents = $class->students->count();
-                $todayEntries = $todayAttendancesByClass->get($class->id, collect());
-                $byStudent = $todayEntries->groupBy('student_id');
+                return $allClasses->map(function ($class) use ($todayAttendancesByClass) {
+                    $totalStudents = $class->students->count();
+                    $todayEntries = $todayAttendancesByClass->get($class->id, collect());
+                    $byStudent = $todayEntries->groupBy('student_id');
 
-                $hadir = 0; $izin = 0; $alpha = 0;
-                foreach ($byStudent as $studentId => $entries) {
-                    $status = \App\Models\StudentAttendance::getDailyStatusFromAttendances($entries);
-                    if ($status === 'hadir' || $status === 'terlambat') $hadir++;
-                    elseif ($status === 'izin' || $status === 'sakit') $izin++;
-                    elseif ($status === 'alpha') $alpha++;
-                }
+                    $hadir = 0; $izin = 0; $alpha = 0;
+                    foreach ($byStudent as $studentId => $entries) {
+                        $status = \App\Models\StudentAttendance::getDailyStatusFromAttendances($entries);
+                        if ($status === 'hadir' || $status === 'terlambat') $hadir++;
+                        elseif ($status === 'izin' || $status === 'sakit') $izin++;
+                        elseif ($status === 'alpha') $alpha++;
+                    }
 
-                return [
-                    'id'             => $class->id,
-                    'name'           => $class->name,
-                    'student_count'  => $totalStudents,
-                    'hadir'          => $hadir,
-                    'izin'           => $izin,
-                    'alpha'          => $alpha,
-                    'belum_absen'    => max(0, $totalStudents - $hadir - $izin - $alpha),
-                ];
-            })->sortBy('name')->values();
+                    return [
+                        'id'             => $class->id,
+                        'name'           => $class->name,
+                        'student_count'  => $totalStudents,
+                        'hadir'          => $hadir,
+                        'izin'           => $izin,
+                        'alpha'          => $alpha,
+                        'belum_absen'    => max(0, $totalStudents - $hadir - $izin - $alpha),
+                    ];
+                })->sortBy('name')->values();
+            });
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard studentsPerClass failed: ' . $e->getMessage());
             $studentsPerClass = collect();
@@ -80,7 +84,8 @@ class DashboardController extends Controller
 
         // Cache stats selama 5 menit — data absensi tidak berubah setiap detik
         // Kunci cache per-sekolah agar data sekolah berbeda tidak campur
-        $schoolId = $this->schoolId();
+        // Cache stats selama 5 menit — data absensi tidak berubah setiap detik
+        // Kunci cache per-sekolah agar data sekolah berbeda tidak campur
         $statsCacheKey = 'dashboard_stats_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_class_' . ($classId ?: 'all');
         try {
             $stats = Cache::remember($statsCacheKey, 300, function () use ($studentsQuery, $consultationQuery, $schoolId) {
@@ -164,43 +169,47 @@ class DashboardController extends Controller
         }
 
         try {
-            $allAttendances = StudentAttendance::whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
-                ->when($classId, fn($q) => $q->where('academic_class_id', $classId))
-                ->get()
-                ->groupBy([
-                    function ($val) {
-                        return Carbon::parse($val->date)->format('Y-m-d');
-                    },
-                    'student_id'
-                ]);
+            $chartCacheKey = 'dashboard_chart_' . ($schoolId ?? 'all') . '_' . $startDate->toDateString() . '_' . $endDate->toDateString() . '_class_' . ($classId ?: 'all');
+            $chartData = Cache::remember($chartCacheKey, 900, function () use ($startDate, $endDate, $classId, $diffInDays, $totalStudents) {
+                $allAttendances = StudentAttendance::whereBetween('date', [$startDate->toDateString(), $endDate->toDateString()])
+                    ->when($classId, fn($q) => $q->where('academic_class_id', $classId))
+                    ->get()
+                    ->groupBy([
+                        function ($val) {
+                            return Carbon::parse($val->date)->format('Y-m-d');
+                        },
+                        'student_id'
+                    ]);
 
-            $presentCounts = [];
-            foreach ($allAttendances as $dateStr => $students) {
-                $presentToday = 0;
-                foreach ($students as $studentId => $dayEntries) {
-                    $dailyStatus = \App\Models\StudentAttendance::getDailyStatusFromAttendances($dayEntries);
-                    if ($dailyStatus === 'hadir' || $dailyStatus === 'terlambat') {
-                        $presentToday++;
+                $presentCounts = [];
+                foreach ($allAttendances as $dateStr => $students) {
+                    $presentToday = 0;
+                    foreach ($students as $studentId => $dayEntries) {
+                        $dailyStatus = \App\Models\StudentAttendance::getDailyStatusFromAttendances($dayEntries);
+                        if ($dailyStatus === 'hadir' || $dailyStatus === 'terlambat') {
+                            $presentToday++;
+                        }
                     }
+                    $presentCounts[$dateStr] = $presentToday;
                 }
-                $presentCounts[$dateStr] = $presentToday;
-            }
 
-            $chartData = [];
-            for ($i = $diffInDays; $i >= 0; $i--) {
-                $date = (clone $endDate)->subDays($i);
-                $dateStr = $date->toDateString();
-                $presentCount = $presentCounts[$dateStr] ?? 0;
-                $percentage = round(($presentCount / $totalStudents) * 100);
-                
-                $chartData[] = [
-                    'label' => $date->isToday() ? 'Hari ini' : 'H-'.$i,
-                    'height' => $percentage,
-                    'date' => $date->format('d/m'),
-                    'present' => $presentCount,
-                    'total' => $totalStudents,
-                ];
-            }
+                $data = [];
+                for ($i = $diffInDays; $i >= 0; $i--) {
+                    $date = (clone $endDate)->subDays($i);
+                    $dateStr = $date->toDateString();
+                    $presentCount = $presentCounts[$dateStr] ?? 0;
+                    $percentage = round(($presentCount / $totalStudents) * 100);
+                    
+                    $data[] = [
+                        'label' => $date->isToday() ? 'Hari ini' : 'H-'.$i,
+                        'height' => $percentage,
+                        'date' => $date->format('d/m'),
+                        'present' => $presentCount,
+                        'total' => $totalStudents,
+                    ];
+                }
+                return $data;
+            });
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard chartData failed: ' . $e->getMessage());
             $chartData = [];
@@ -209,39 +218,42 @@ class DashboardController extends Controller
         // 3. Leaderboards / Rankings
         // a. Attendance Ranking (Top 5)
         try {
-            $subquery = \Illuminate\Support\Facades\DB::table('student_attendances')
-                ->join('students', 'student_attendances.student_id', '=', 'students.id')
-                ->select('student_attendances.student_id', 'student_attendances.date')
-                ->when($classId, fn($q) => $q->where('student_attendances.academic_class_id', $classId))
-                ->when($activeSemester, fn($q) => $q->whereBetween('student_attendances.date', [$activeSemester->start_date, $activeSemester->end_date]))
-                ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
-                ->groupBy('student_attendances.student_id', 'student_attendances.date')
-                ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('hadir', 'terlambat') THEN 1 ELSE 0 END) > 0")
-                ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('sakit', 'izin') THEN 1 ELSE 0 END) = 0")
-                ->havingRaw("SUM(CASE WHEN student_attendances.status = 'alpha' THEN 1 ELSE 0 END) < 3");
+            $attRankingCacheKey = 'dashboard_att_ranking_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
+            $attendanceRanking = Cache::remember($attRankingCacheKey, 1800, function () use ($classId, $activeSemester, $schoolId) {
+                $subquery = \Illuminate\Support\Facades\DB::table('student_attendances')
+                    ->join('students', 'student_attendances.student_id', '=', 'students.id')
+                    ->select('student_attendances.student_id', 'student_attendances.date')
+                    ->when($classId, fn($q) => $q->where('student_attendances.academic_class_id', $classId))
+                    ->when($activeSemester, fn($q) => $q->whereBetween('student_attendances.date', [$activeSemester->start_date, $activeSemester->end_date]))
+                    ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
+                    ->groupBy('student_attendances.student_id', 'student_attendances.date')
+                    ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('hadir', 'terlambat') THEN 1 ELSE 0 END) > 0")
+                    ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('sakit', 'izin') THEN 1 ELSE 0 END) = 0")
+                    ->havingRaw("SUM(CASE WHEN student_attendances.status = 'alpha' THEN 1 ELSE 0 END) < 3");
 
-            $attRankingQuery = \Illuminate\Support\Facades\DB::table(\Illuminate\Support\Facades\DB::raw("({$subquery->toSql()}) as daily_presence"))
-                ->mergeBindings($subquery)
-                ->select('student_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
-                ->groupBy('student_id')
-                ->orderByDesc('total');
+                $attRankingQuery = \Illuminate\Support\Facades\DB::table(\Illuminate\Support\Facades\DB::raw("({$subquery->toSql()}) as daily_presence"))
+                    ->mergeBindings($subquery)
+                    ->select('student_id', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+                    ->groupBy('student_id')
+                    ->orderByDesc('total');
 
-            $topAttendanceItems = $attRankingQuery->limit(5)->get();
-            $topAttendanceStudentIds = $topAttendanceItems->pluck('student_id');
-            $topAttendanceStudents = Student::with('academicClasses')
-                ->whereIn('id', $topAttendanceStudentIds)
-                ->get()
-                ->keyBy('id');
+                $topAttendanceItems = $attRankingQuery->limit(5)->get();
+                $topAttendanceStudentIds = $topAttendanceItems->pluck('student_id');
+                $topAttendanceStudents = Student::with('academicClasses')
+                    ->whereIn('id', $topAttendanceStudentIds)
+                    ->get()
+                    ->keyBy('id');
 
-            $attendanceRanking = $topAttendanceItems->map(function($item) use ($topAttendanceStudents) {
-                $student = $topAttendanceStudents->get($item->student_id);
-                $className = $student && $student->academic_class ? $student->academic_class->name : '';
-                return [
-                    'name' => $student->name ?? 'Unknown',
-                    'class_name' => $className,
-                    'value' => (int) $item->total,
-                    'avatar' => $student->avatar ?? null,
-                ];
+                return $topAttendanceItems->map(function($item) use ($topAttendanceStudents) {
+                    $student = $topAttendanceStudents->get($item->student_id);
+                    $className = $student && $student->academic_class ? $student->academic_class->name : '';
+                    return [
+                        'name' => $student->name ?? 'Unknown',
+                        'class_name' => $className,
+                        'value' => (int) $item->total,
+                        'avatar' => $student->avatar ?? null,
+                    ];
+                });
             });
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard attendanceRanking failed: ' . $e->getMessage());
@@ -250,32 +262,35 @@ class DashboardController extends Controller
 
         // b. Assessment Ranking (Top 5)
         try {
-            $scoreRankingQuery = \App\Models\StudentScore::query()
-                ->join('students', 'student_scores.student_id', '=', 'students.id')
-                ->join('daily_assessments', 'student_scores.daily_assessment_id', '=', 'daily_assessments.id')
-                ->select('student_scores.student_id', \Illuminate\Support\Facades\DB::raw('AVG(score) as average'))
-                ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
-                ->groupBy('student_scores.student_id')
-                ->orderByDesc('average')
-                ->with('student.academicClasses');
+            $scoreRankingCacheKey = 'dashboard_score_ranking_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
+            $assessmentRanking = Cache::remember($scoreRankingCacheKey, 1800, function () use ($schoolId, $activeSemester, $classId) {
+                $scoreRankingQuery = \App\Models\StudentScore::query()
+                    ->join('students', 'student_scores.student_id', '=', 'students.id')
+                    ->join('daily_assessments', 'student_scores.daily_assessment_id', '=', 'daily_assessments.id')
+                    ->select('student_scores.student_id', \Illuminate\Support\Facades\DB::raw('AVG(score) as average'))
+                    ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
+                    ->groupBy('student_scores.student_id')
+                    ->orderByDesc('average')
+                    ->with('student.academicClasses');
 
-            if ($activeSemester) {
-                $scoreRankingQuery->whereBetween('daily_assessments.date', [$activeSemester->start_date, $activeSemester->end_date]);
-            }
+                if ($activeSemester) {
+                    $scoreRankingQuery->whereBetween('daily_assessments.date', [$activeSemester->start_date, $activeSemester->end_date]);
+                }
 
-            if ($classId) {
-                $scoreRankingQuery->where('daily_assessments.academic_class_id', $classId);
-            }
+                if ($classId) {
+                    $scoreRankingQuery->where('daily_assessments.academic_class_id', $classId);
+                }
 
-            $assessmentRanking = $scoreRankingQuery->limit(5)->get()->map(function($item) {
-                $student = $item->student;
-                $className = $student && $student->academic_class ? $student->academic_class->name : '';
-                return [
-                    'name' => $student->name ?? 'Unknown',
-                    'class_name' => $className,
-                    'value' => round($item->average, 1),
-                    'avatar' => $student->avatar ?? null,
-                ];
+                return $scoreRankingQuery->limit(5)->get()->map(function($item) {
+                    $student = $item->student;
+                    $className = $student && $student->academic_class ? $student->academic_class->name : '';
+                    return [
+                        'name' => $student->name ?? 'Unknown',
+                        'class_name' => $className,
+                        'value' => round($item->average, 1),
+                        'avatar' => $student->avatar ?? null,
+                    ];
+                });
             });
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard assessmentRanking failed: ' . $e->getMessage());

@@ -18,6 +18,15 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // ── Super Admin Yayasan Only ── Manajemen Sekolah ─────────────────────────
+    Route::middleware(['role:Super Admin'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('/schools', [\App\Http\Controllers\Admin\SchoolController::class, 'index'])->name('schools.index');
+        Route::post('/schools', [\App\Http\Controllers\Admin\SchoolController::class, 'store'])->name('schools.store');
+        Route::put('/schools/{school}', [\App\Http\Controllers\Admin\SchoolController::class, 'update'])->name('schools.update');
+        Route::delete('/schools/{school}', [\App\Http\Controllers\Admin\SchoolController::class, 'destroy'])->name('schools.destroy');
+        Route::post('/schools/{school}/toggle', [\App\Http\Controllers\Admin\SchoolController::class, 'toggleActive'])->name('schools.toggle');
+    });
+
     // Admin Group A: Super Admin, Admin, Pimpinan, Staff/TU
     // Data Siswa (GET read-only untuk Pimpinan, dibatasi di controller)
     Route::middleware(['role:Super Admin|Kepala Sekolah|Staff/TU'])->prefix('admin')->name('admin.')->group(function () {

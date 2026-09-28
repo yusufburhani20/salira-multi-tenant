@@ -2,7 +2,9 @@ import InputError from '@/Components/InputError';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { FormEventHandler, useState } from 'react';
 
-export default function Register() {
+type School = { id: number; name: string; type: string; };
+
+export default function Register({ schools = [] }: { schools: School[] }) {
     const { data, setData, post, processing, errors, reset } = useForm({
         name: '',
         email: '',
@@ -10,6 +12,7 @@ export default function Register() {
         phone: '',
         telegram_id: '',
         role: 'Guru',
+        school_id: schools.length === 1 ? String(schools[0].id) : '',
         password: '',
         password_confirmation: '',
     });
@@ -91,6 +94,18 @@ export default function Register() {
                                     className={inputBase} placeholder="Nomor Induk Pegawai" />
                             </div>
                             <InputError message={errors.nip} className="mt-1" />
+                        </div>
+
+                        {/* Sekolah */}
+                        <div>
+                            <label className={labelBase}>Sekolah</label>
+                            <select value={data.school_id} onChange={e => setData('school_id', e.target.value)} className={selectBase} required>
+                                <option value="">-- Pilih Sekolah --</option>
+                                {schools.map(s => (
+                                    <option key={s.id} value={String(s.id)}>{s.type} — {s.name}</option>
+                                ))}
+                            </select>
+                            <InputError message={errors.school_id} className="mt-1" />
                         </div>
 
                         {/* Role */}
@@ -279,6 +294,16 @@ export default function Register() {
                                                 className={inputBase} placeholder="No. Induk Pegawai" />
                                         </div>
                                         <InputError message={errors.nip} className="mt-1" />
+                                    </div>
+                                    <div>
+                                        <label className={labelBase}>Sekolah</label>
+                                        <select value={data.school_id} onChange={e => setData('school_id', e.target.value)} className={selectBase} required>
+                                            <option value="">-- Pilih Sekolah --</option>
+                                            {schools.map(s => (
+                                                <option key={s.id} value={String(s.id)}>{s.type} — {s.name}</option>
+                                            ))}
+                                        </select>
+                                        <InputError message={errors.school_id} className="mt-1" />
                                     </div>
                                     <div>
                                         <label className={labelBase}>Daftar Sebagai</label>

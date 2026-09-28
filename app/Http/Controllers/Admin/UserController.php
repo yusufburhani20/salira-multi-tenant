@@ -47,8 +47,8 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'nip' => 'nullable|string|max:50',
-            'phone' => 'nullable|string|max:20',
+            'nip' => ['nullable', 'string', 'max:50', \Illuminate\Validation\Rule::unique('users', 'nip')->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $this->schoolId())],
+            'phone' => ['nullable', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users', 'phone')->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $this->schoolId())],
             'telegram_id' => 'nullable|string|max:100',
             'status' => ['required', Rule::enum(UserStatus::class)],
             'roles' => 'nullable|array',
@@ -83,8 +83,8 @@ class UserController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'nip' => 'nullable|string|max:50',
-            'phone' => 'nullable|string|max:20',
+            'nip' => ['nullable', 'string', 'max:50', \Illuminate\Validation\Rule::unique('users', 'nip')->ignore($user->id)->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $user->school_id)],
+            'phone' => ['nullable', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users', 'phone')->ignore($user->id)->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $user->school_id)],
             'telegram_id' => 'nullable|string|max:100',
             'status' => ['required', Rule::enum(UserStatus::class)],
             'roles' => 'nullable|array',

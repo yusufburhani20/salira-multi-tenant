@@ -40,7 +40,7 @@ class RegisteredUserController extends Controller
         $request->validate([
             'name'          => 'required|string|max:255',
             'email'         => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'nip'           => 'required|string|max:50|unique:'.User::class,
+            'nip'           => ['required', 'string', 'max:50', \Illuminate\Validation\Rule::unique(User::class, 'nip')->where('school_id', $request->school_id)],
             'phone'         => 'required|string|max:20|unique:'.User::class,
             'telegram_id'   => 'nullable|string|max:100',
             'role'          => 'required|string|in:Guru,Staff/TU',

@@ -50,7 +50,7 @@ class ComputerLabController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        ComputerLab::create($request->only('name', 'location', 'description'));
+        ComputerLab::create(array_merge($request->only('name', 'location', 'description'), $this->schoolContext()));
 
         return back()->with('success', 'Lab Komputer berhasil ditambahkan.');
     }

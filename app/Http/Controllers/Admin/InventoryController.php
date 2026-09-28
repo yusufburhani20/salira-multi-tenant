@@ -75,7 +75,7 @@ class InventoryController extends Controller
             'location'       => 'nullable|string|max:191',
         ]);
 
-        InventoryItem::create($validated);
+        InventoryItem::create(array_merge($validated, $this->schoolContext()));
 
         return back()->with('success', 'Barang berhasil ditambahkan.');
     }
@@ -144,7 +144,7 @@ class InventoryController extends Controller
             'code' => 'required|string|max:20|unique:inventory_categories,code',
             'name' => 'required|string|max:191',
         ]);
-        InventoryCategory::create($request->only('code', 'name', 'description'));
+        InventoryCategory::create(array_merge($request->only('code', 'name', 'description'), $this->schoolContext()));
         return back()->with('success', 'Kategori berhasil ditambahkan.');
     }
 

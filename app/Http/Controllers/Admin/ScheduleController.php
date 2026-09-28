@@ -51,14 +51,14 @@ class ScheduleController extends Controller
             'end_time.after'      => 'Jam selesai harus setelah jam mulai.',
         ]);
 
-        Schedule::create([
+        Schedule::create(array_merge([
             'class_id'   => $request->class_id,
             'teacher_id' => $request->teacher_id,
             'subject'    => $request->subject,
             'day'        => $request->day,
             'start_time' => $request->start_time . ':00',
             'end_time'   => $request->end_time . ':00',
-        ]);
+        ], $this->schoolContext()));
 
         return back()->with('success', 'Jadwal pelajaran berhasil ditambahkan.');
     }

@@ -26,7 +26,7 @@ class FinanceCategoryController extends Controller
             'description' => 'nullable|string',
         ]);
 
-        FinanceCategory::create($request->all());
+        FinanceCategory::create(array_merge($request->only('name', 'type', 'description'), $this->schoolContext()));
 
         return redirect()->back()->with('success', 'Kategori berhasil ditambahkan');
     }

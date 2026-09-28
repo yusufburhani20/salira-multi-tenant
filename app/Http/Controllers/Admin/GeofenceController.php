@@ -36,7 +36,7 @@ class GeofenceController extends Controller
             'work_end_time' => 'nullable|date_format:H:i',
         ]);
 
-        Geofence::create($validated);
+        Geofence::create(array_merge($validated, $this->schoolContext()));
 
         return back()->with('success', 'Geofence created successfully.');
     }

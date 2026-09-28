@@ -78,14 +78,14 @@ class BillController extends Controller
                 $nextId = str_pad(($lastId ? $lastId + 1 : 1), 6, '0', STR_PAD_LEFT);
                 $billNumber = 'INV-' . $request->year . str_pad($request->month, 2, '0', STR_PAD_LEFT) . '-' . $nextId;
 
-                $bill = Bill::create([
+                $bill = Bill::create(array_merge([
                     'bill_number' => $billNumber,
                     'student_id' => $student->id,
                     'title' => $request->title,
                     'month' => $request->month,
                     'year' => $request->year,
                     'amount' => $request->amount,
-                ]);
+                ], $this->schoolContext()));
 
                 // Notify via Telegram and Email
                 $student->notify(new BillGeneratedNotification($bill));

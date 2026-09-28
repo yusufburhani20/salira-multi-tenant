@@ -43,7 +43,7 @@ class EventController extends Controller
         $validated['created_by'] = $request->user()->id;
         $validated['is_active'] = true;
 
-        Event::create($validated);
+        Event::create(array_merge($validated, $this->schoolContext()));
 
         return back()->with('success', 'Event baru berhasil dibuat.');
     }

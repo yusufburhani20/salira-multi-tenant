@@ -31,7 +31,7 @@ class AnnouncementController extends Controller
             'is_active' => 'boolean',
         ]);
 
-        $announcement = Announcement::create($validated);
+        $announcement = Announcement::create(array_merge($validated, $this->schoolContext()));
 
         // Kirim notifikasi dengan jeda 3 detik per 10 siswa (cegah spam/rate-limit WA & Telegram)
         if ($validated['target'] === 'all' || $validated['target'] === 'students') {

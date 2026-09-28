@@ -38,6 +38,7 @@ class ExpenseController extends Controller
             $data['attachment'] = $request->file('attachment')->store('expenses', 'public');
         }
 
+        $data['school_id'] = $this->schoolId();
         Expense::create($data);
 
         return redirect()->back()->with('success', 'Pengeluaran berhasil dicatat');

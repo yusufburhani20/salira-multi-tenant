@@ -23,6 +23,9 @@ echo "$LOG_PREFIX 🚀 Memulai proses deployment SALIRA..."
 # 1. Pindah ke direktori utama
 cd "$APP_DIR" || die "Gagal masuk ke direktori $APP_DIR"
 
+# Fix kepemilikan file agar user www bisa membaca/menulis (cegah EACCES pada .git/index)
+chown -R www:www "$APP_DIR" 2>/dev/null || true
+
 # 2. Menarik kode terbaru dari GitHub
 # Mendukung repo privat via GITHUB_USER + GITHUB_TOKEN dari environment variable
 echo "$LOG_PREFIX 📥 Menarik kode terbaru dari GitHub..."
@@ -61,8 +64,6 @@ git reset --hard FETCH_HEAD 2>&1 || die "Gagal melakukan git reset --hard ke kod
 
 echo "$LOG_PREFIX ✅ git fetch dan reset berhasil."
 
-# Fix kepemilikan file agar user www bisa membaca/menulis (cegah EACCES)
-chown -R www:www "$APP_DIR" 2>/dev/null || true
 
 # 3. Menginstall dependensi PHP (Composer)
 echo "$LOG_PREFIX 📦 Memperbarui paket PHP (composer install)..."

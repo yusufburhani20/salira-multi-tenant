@@ -14,8 +14,11 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
+use App\Http\Controllers\Concerns\HasSchoolScope;
+
 class LeaderDashboardController extends Controller
 {
+    use HasSchoolScope;
     public function index(\Illuminate\Http\Request $request)
     {
         $today = Carbon::today()->toDateString();
@@ -23,7 +26,7 @@ class LeaderDashboardController extends Controller
         $classId = $request->academic_class_id;
         
         // 1. Statistik Kehadiran Siswa Hari Ini (cached 5 menit)
-        $statsCacheKey = 'leader_stats_' . $today . '_class_' . ($classId ?: 'all');
+        $statsCacheKey = 'leader_stats_' . ($this->schoolId() ?? 'all') . '_' . $today . '_class_' . ($classId ?: 'all');
         [$totalStudents, $studentPresence] = Cache::remember($statsCacheKey, 300, function () use ($today, $classId) {
             $totalStudentsQuery = Student::query();
             if ($classId) {
@@ -130,11 +133,14 @@ class LeaderDashboardController extends Controller
                 return $user;
             });
 
-        // 6. Inventory Summary — 1 query GROUP BY, bukan 5 query terpisah
-        $invGrouped = Cache::remember('inventory_stats', 300, function () {
-            return InventoryBarcode::select('status', DB::raw('count(*) as total'))
-                ->groupBy('status')
-                ->pluck('total', 'status')
+        // 6. Inventory Summary — filter by school via InventoryItem join
+        $invCacheKey = 'inventory_stats_' . ($this->schoolId() ?? 'all');
+        $invGrouped = Cache::remember($invCacheKey, 300, function () {
+            return InventoryBarcode::select('inventory_barcodes.status', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+                ->join('inventory_items', 'inventory_barcodes.item_id', '=', 'inventory_items.id')
+                ->when($this->schoolId(), fn($q) => $q->where('inventory_items.school_id', $this->schoolId()))
+                ->groupBy('inventory_barcodes.status')
+                ->pluck('total', 'inventory_barcodes.status')
                 ->toArray();
         });
         $inventoryStats = [

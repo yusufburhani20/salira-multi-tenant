@@ -146,7 +146,7 @@ class UserController extends Controller
             'file' => 'required|file|extensions:xlsx,xls,csv|max:5120',
         ]);
 
-        Excel::import(new UsersImport(), $request->file('file'));
+        Excel::import(new UsersImport($this->schoolId()), $request->file('file'));
 
         return redirect()->back()->with('success', 'Import data user berhasil.');
     }

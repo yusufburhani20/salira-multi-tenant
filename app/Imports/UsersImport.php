@@ -11,6 +11,7 @@ use App\Enums\UserStatus;
 
 class UsersImport implements ToCollection, WithHeadingRow
 {
+    public function __construct(private ?int $schoolId = null) {}
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
@@ -39,8 +40,9 @@ class UsersImport implements ToCollection, WithHeadingRow
             if ($user) {
                 $user->update($userData);
             } else {
-                $userData['email'] = $email;
-                $userData['password'] = Hash::make('password');
+                $userData['email']     = $email;
+                $userData['password']  = Hash::make('password');
+                $userData['school_id'] = $this->schoolId;
                 $user = User::create($userData);
             }
 

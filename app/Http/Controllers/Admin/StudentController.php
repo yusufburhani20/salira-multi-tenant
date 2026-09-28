@@ -169,7 +169,7 @@ class StudentController extends Controller
             'file' => 'required|file|extensions:xlsx,xls,csv|max:5120',
         ]);
 
-        Excel::import(new StudentsImport(), $request->file('file'));
+        Excel::import(new StudentsImport($this->schoolId()), $request->file('file'));
 
         return redirect()->back()->with('success', 'Import data siswa berhasil.');
     }

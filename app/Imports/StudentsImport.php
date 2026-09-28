@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentsImport extends DefaultValueBinder implements ToCollection, WithHeadingRow, WithCustomValueBinder
 {
+    public function __construct(private ?int $schoolId = null) {}
     public function bindValue(Cell $cell, $value)
     {
         // For numbers that should stay as strings (NISN, NIS, Phone, etc.)
@@ -78,10 +79,14 @@ class StudentsImport extends DefaultValueBinder implements ToCollection, WithHea
             $nisn = trim((string) $row['nisn']);
             $nis = !empty($row['nis']) ? trim((string) $row['nis']) : null;
 
-            // Find existing student by NISN or NIS to prevent unique constraint violation
-            $student = Student::where('nisn', $nisn)->first();
+            // Find existing student scoped to same school to prevent cross-school data overwrite
+            $query = Student::where('nisn', $nisn);
+            if ($this->schoolId) $query->where('school_id', $this->schoolId);
+            $student = $query->first();
             if (!$student && $nis) {
-                $student = Student::where('nis', $nis)->first();
+                $q2 = Student::where('nis', $nis);
+                if ($this->schoolId) $q2->where('school_id', $this->schoolId);
+                $student = $q2->first();
             }
 
             $updateData = [
@@ -100,7 +105,8 @@ class StudentsImport extends DefaultValueBinder implements ToCollection, WithHea
                 $student->update($updateData);
             } else {
                 $student = Student::create(array_merge($updateData, [
-                    'password' => Hash::make($nisn),
+                    'password'  => Hash::make($nisn),
+                    'school_id' => $this->schoolId,
                 ]));
             }
 

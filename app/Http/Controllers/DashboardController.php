@@ -307,10 +307,12 @@ class DashboardController extends Controller
         // 5. Inventory Summary — 1 query GROUP BY, bukan 5 query terpisah
         try {
             $invCacheKey = 'inventory_stats_' . ($this->schoolId() ?? 'all');
-            $invGrouped = Cache::remember($invCacheKey, 300, function () {
-                return InventoryBarcode::select('status', DB::raw('count(*) as total'))
-                    ->groupBy('status')
-                    ->pluck('total', 'status')
+            $invGrouped = Cache::remember($invCacheKey, 300, function () use ($schoolId) {
+                return InventoryBarcode::select('inventory_barcodes.status', DB::raw('count(*) as total'))
+                    ->join('inventory_items', 'inventory_barcodes.item_id', '=', 'inventory_items.id')
+                    ->when($schoolId, fn($q) => $q->where('inventory_items.school_id', $schoolId))
+                    ->groupBy('inventory_barcodes.status')
+                    ->pluck('total', 'inventory_barcodes.status')
                     ->toArray();
             });
             $inventoryStats = [

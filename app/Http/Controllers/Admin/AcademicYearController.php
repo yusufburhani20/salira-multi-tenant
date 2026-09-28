@@ -29,7 +29,9 @@ class AcademicYearController extends Controller
 
         DB::transaction(function () use ($validated) {
             if ($validated['is_active'] ?? false) {
-                AcademicYear::where('is_active', true)->update(['is_active' => false]);
+                AcademicYear::where('is_active', true)
+                    ->when($this->schoolId(), fn($q) => $q->where('school_id', $this->schoolId()))
+                    ->update(['is_active' => false]);
             }
 
             $academicYear = AcademicYear::create(array_merge($validated, $this->schoolContext()));

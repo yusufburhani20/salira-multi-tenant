@@ -210,13 +210,15 @@ class DashboardController extends Controller
         // a. Attendance Ranking (Top 5)
         try {
             $subquery = \Illuminate\Support\Facades\DB::table('student_attendances')
-                ->select('student_id', 'date')
-                ->when($classId, fn($q) => $q->where('academic_class_id', $classId))
-                ->when($activeSemester, fn($q) => $q->whereBetween('date', [$activeSemester->start_date, $activeSemester->end_date]))
-                ->groupBy('student_id', 'date')
-                ->havingRaw("SUM(CASE WHEN status IN ('hadir', 'terlambat') THEN 1 ELSE 0 END) > 0")
-                ->havingRaw("SUM(CASE WHEN status IN ('sakit', 'izin') THEN 1 ELSE 0 END) = 0")
-                ->havingRaw("SUM(CASE WHEN status = 'alpha' THEN 1 ELSE 0 END) < 3");
+                ->join('students', 'student_attendances.student_id', '=', 'students.id')
+                ->select('student_attendances.student_id', 'student_attendances.date')
+                ->when($classId, fn($q) => $q->where('student_attendances.academic_class_id', $classId))
+                ->when($activeSemester, fn($q) => $q->whereBetween('student_attendances.date', [$activeSemester->start_date, $activeSemester->end_date]))
+                ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
+                ->groupBy('student_attendances.student_id', 'student_attendances.date')
+                ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('hadir', 'terlambat') THEN 1 ELSE 0 END) > 0")
+                ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('sakit', 'izin') THEN 1 ELSE 0 END) = 0")
+                ->havingRaw("SUM(CASE WHEN student_attendances.status = 'alpha' THEN 1 ELSE 0 END) < 3");
 
             $attRankingQuery = \Illuminate\Support\Facades\DB::table(\Illuminate\Support\Facades\DB::raw("({$subquery->toSql()}) as daily_presence"))
                 ->mergeBindings($subquery)
@@ -252,6 +254,7 @@ class DashboardController extends Controller
                 ->join('students', 'student_scores.student_id', '=', 'students.id')
                 ->join('daily_assessments', 'student_scores.daily_assessment_id', '=', 'daily_assessments.id')
                 ->select('student_scores.student_id', \Illuminate\Support\Facades\DB::raw('AVG(score) as average'))
+                ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
                 ->groupBy('student_scores.student_id')
                 ->orderByDesc('average')
                 ->with('student.academicClasses');

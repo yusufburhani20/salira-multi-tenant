@@ -103,7 +103,7 @@ export default function Report({ prefilledCode, unit }: any) {
                 
                 {/* Header */}
                 <div className="text-center space-y-2">
-                    <img src="/images/Salira.png" alt="SALIRA Logo" className="h-10 mx-auto" />
+                    <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-10 mx-auto" />
                     <h2 className="text-xl font-black text-slate-800 dark:text-slate-100 tracking-tight">
                         Lapor Kerusakan PC
                     </h2>

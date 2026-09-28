@@ -284,9 +284,7 @@ export default function Login({
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-1">
-                            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
-                            </svg>
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-6 w-auto brightness-0 invert" />
                             <p className="text-blue-100 text-xs font-semibold uppercase tracking-widest">SALIRA</p>
                         </div>
                         <h1 className="text-white text-3xl font-black tracking-tight leading-tight">Selamat Datang</h1>
@@ -357,7 +355,7 @@ export default function Login({
                         {/* Submit */}
                         <button type="submit" disabled={processing}
                             className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold text-sm transition-all shadow-lg shadow-blue-600/30 disabled:opacity-60 disabled:cursor-not-allowed mt-1">
-                            {processing ? 'Memproses...' : 'Masuk sebagai Guru / Staff'}
+                            {processing ? 'Memproses...' : 'Masuk'}
                         </button>
                     </form>
 
@@ -370,12 +368,11 @@ export default function Login({
 
                     {/* Portal Siswa */}
                     <Link href={route('portal.login')}
-                        className="flex items-center justify-between w-full px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 font-bold text-sm hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
+                        className="flex items-center justify-center w-full px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 font-bold text-sm hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
                         <span className="flex items-center gap-2">
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                             Portal Siswa & Wali Murid
                         </span>
-                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
                     </Link>
 
                     {/* Absen Event */}
@@ -447,9 +444,7 @@ export default function Login({
                     {/* Right â€” Login Form */}
                     <div className="w-7/12 bg-white dark:bg-slate-800 p-10 flex flex-col justify-center">
                         <div className="flex items-center gap-2 mb-10 mx-auto">
-                            <svg className="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
-                            </svg>
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-8 w-auto" />
                             <span className="text-blue-900 dark:text-white font-black text-2xl tracking-tight">SALIRA</span>
                         </div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-1">Masuk</h2>
@@ -510,7 +505,7 @@ export default function Login({
 
                             <button type="submit" disabled={processing}
                                 className="w-full py-3.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm transition-all shadow-lg shadow-blue-600/25 disabled:opacity-60 disabled:cursor-not-allowed mt-1">
-                                {processing ? 'Memproses...' : 'Masuk sebagai Guru / Staff'}
+                                {processing ? 'Memproses...' : 'Masuk'}
                             </button>
                         </form>
 
@@ -522,12 +517,11 @@ export default function Login({
 
                         <div className="flex flex-col gap-3">
                             <Link href={route('portal.login')}
-                                className="flex items-center justify-between px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 font-bold text-sm hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
+                                className="flex items-center justify-center px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 text-blue-700 dark:text-blue-400 font-bold text-sm hover:bg-blue-100 dark:hover:bg-blue-950/50 transition-colors">
                                 <span className="flex items-center gap-2">
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l9-5-9-5-9 5 9 5z"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z"/></svg>
                                     Portal Siswa & Wali Murid
                                 </span>
-                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7"/></svg>
                             </Link>
 
                             <button type="button"

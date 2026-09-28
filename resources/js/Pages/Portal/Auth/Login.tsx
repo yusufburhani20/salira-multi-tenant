@@ -36,9 +36,7 @@ export default function PortalLogin() {
                     </div>
                     <div className="relative z-10">
                         <div className="flex items-center gap-2 mb-1">
-                            <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
-                            </svg>
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-6 w-auto brightness-0 invert" />
                             <p className="text-blue-100 text-xs font-semibold uppercase tracking-widest">PORTAL SALIRA</p>
                         </div>
                         <h1 className="text-white text-3xl font-black tracking-tight leading-tight">Selamat Datang 👋</h1>
@@ -174,9 +172,7 @@ export default function PortalLogin() {
                     {/* Right — Login Form */}
                     <div className="w-7/12 bg-white dark:bg-slate-800 p-10 flex flex-col justify-center">
                         <div className="flex items-center gap-2 mb-10 mx-auto">
-                            <svg className="w-7 h-7 text-blue-600" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
-                            </svg>
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-8 w-auto" />
                             <span className="text-blue-900 dark:text-white font-black text-2xl tracking-tight">SALIRA</span>
                         </div>
                         <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-1">Masuk</h2>

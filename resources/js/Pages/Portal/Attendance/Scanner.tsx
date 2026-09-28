@@ -160,7 +160,7 @@ export default function Scanner() {
                 {/* Left Side: Scanner */}
                 <div className="lg:col-span-2 bg-white dark:bg-slate-800 rounded-3xl shadow-xl border border-slate-100 dark:border-slate-700 overflow-hidden relative flex flex-col">
                     {/* Header Info */}
-                    <div className="p-6 bg-gradient-to-r from-blue-600 to-indigo-700 text-white flex justify-between items-center">
+                    <div className="p-6 bg-blue-600 text-white flex justify-between items-center">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
                                 <CameraIcon className="w-6 h-6" />
@@ -367,9 +367,7 @@ export default function Scanner() {
                 <Head title="Terminal Presensi" />
                 <div className="w-full flex justify-center mb-6">
                     <div className="flex items-center gap-3">
-                        <svg className="w-10 h-10 text-blue-500" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M14.5,4h-5C7.01,4,5,6.01,5,8.5S7.01,13,9.5,13h3c1.38,0,2.5,1.12,2.5,2.5S13.88,18,12.5,18H8v3h4.5 c2.49,0,4.5-2.01,4.5-4.5S14.99,12,12.5,12h-3C8.12,12,7,10.88,7,9.5S8.12,7,9.5,7h5V4z"/>
-                        </svg>
+                        <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-10 w-auto brightness-0 invert" />
                         <div className="flex flex-col items-start">
                             <p className="text-white font-black text-3xl tracking-tight leading-none">SALIRA</p>
                             <p className="text-slate-400 text-[11px] font-bold tracking-widest uppercase mt-1">Absensi Digital</p>

@@ -49,7 +49,7 @@
 
         <!-- Brand -->
         <div class="pt-8 flex items-center justify-center gap-2 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
-            <img src="/images/Salira.png" alt="SALIRA" class="h-5 w-auto">
+            <img src="/images/logo-salira.png" alt="SALIRA" class="h-5 w-auto">
             <span class="text-sm font-black tracking-widest text-slate-800">SALIRA</span>
         </div>
     </div>

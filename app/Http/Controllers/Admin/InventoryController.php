@@ -111,7 +111,7 @@ class InventoryController extends Controller
         return Inertia::render('Admin/Inventory/Show', [
             'item' => $item,
             'schoolName' => Setting::get('school_name', 'SALIRA ACADEMY'),
-            'schoolLogo' => Setting::get('school_logo') ? asset('storage/' . Setting::get('school_logo')) : '/images/Salira.png',
+            'schoolLogo' => Setting::get('school_logo') ? asset('storage/' . Setting::get('school_logo')) : '/images/logo-salira.png',
         ]);
     }
 

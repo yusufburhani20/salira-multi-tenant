@@ -63,7 +63,7 @@ export default function IdCard({ student, qrToken, settings, activeClass }: any)
                                         <h2 className="text-xl font-black tracking-tight">{settings.school_name}</h2>
                                         <p className="text-[9px] opacity-70 font-bold uppercase tracking-widest">Digital Student Identification</p>
                                     </div>
-                                    <img src={settings.school_logo || "/images/Salira.png"} className="h-14 w-auto drop-shadow-md" alt="Logo" />
+                                    <img src={settings.school_logo || "/images/logo-salira.png"} className="h-14 w-auto drop-shadow-md" alt="Logo" />
                                 </div>
                                 <div>
                                     <p className="text-[10px] opacity-60 font-black uppercase tracking-widest mb-1">Nama Lengkap</p>
@@ -88,7 +88,7 @@ export default function IdCard({ student, qrToken, settings, activeClass }: any)
                     ) : (
                         <div className="w-[280px] h-[430px] bg-emerald-900 rounded-[2.5rem] shadow-2xl overflow-hidden flex flex-col text-white scale-90 sm:scale-100 origin-center">
                             <div className="p-6 text-center border-b border-white/10">
-                                <img src={settings.school_logo || "/images/Salira.png"} className="h-16 w-auto mx-auto mb-3 drop-shadow-md" alt="Logo" />
+                                <img src={settings.school_logo || "/images/logo-salira.png"} className="h-16 w-auto mx-auto mb-3 drop-shadow-md" alt="Logo" />
                                 <h2 className="text-base font-black tracking-tight leading-tight">{settings.school_name}</h2>
                             </div>
                             <div className="flex-1 p-6 flex flex-col items-center justify-center text-center">
@@ -158,7 +158,7 @@ export default function IdCard({ student, qrToken, settings, activeClass }: any)
                                         <p style={{ margin: 0, fontSize: '12px', fontWeight: 900, letterSpacing: '-0.02em' }}>{settings.school_name}</p>
                                         <p style={{ margin: '2px 0 0', fontSize: '5.5px', opacity: 0.7, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>Digital Student Identification</p>
                                     </div>
-                                    <img src={settings.school_logo || '/images/Salira.png'} style={{ height: '38px', width: 'auto', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} alt="Logo" />
+                                    <img src={settings.school_logo || '/images/logo-salira.png'} style={{ height: '38px', width: 'auto', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} alt="Logo" />
                                 </div>
                                 <div>
                                     <p style={{ margin: '0 0 2px', fontSize: '5.5px', opacity: 0.6, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Nama Lengkap</p>
@@ -194,7 +194,7 @@ export default function IdCard({ student, qrToken, settings, activeClass }: any)
                         <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', boxSizing: 'border-box' }}>
                             {/* Header */}
                             <div style={{ padding: '10px', textAlign: 'center', borderBottom: '1px solid rgba(255,255,255,0.1)', flexShrink: 0 }}>
-                                <img src={settings.school_logo || '/images/Salira.png'} style={{ height: '48px', width: 'auto', display: 'block', margin: '0 auto 8px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} alt="Logo" />
+                                <img src={settings.school_logo || '/images/logo-salira.png'} style={{ height: '48px', width: 'auto', display: 'block', margin: '0 auto 8px', filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.2))' }} alt="Logo" />
                                 <p style={{ margin: 0, fontSize: '10px', fontWeight: 900, lineHeight: 1.3 }}>{settings.school_name}</p>
                             </div>
                             {/* Body */}

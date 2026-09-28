@@ -72,14 +72,14 @@ return new class extends Migration
         if (Schema::hasTable('settings') && Schema::hasColumn('settings', 'school_id')) {
             Schema::table('settings', function (Blueprint $blueprint) {
                 // Drop unique index lama jika ada (key saja sudah tidak unik lagi karena per-sekolah)
-                try {
-                    $blueprint->dropUnique(['key']);
-                } catch (\Throwable $e) {
-                    // Index mungkin tidak ada, abaikan
+                if (Schema::hasIndex('settings', 'settings_key_unique')) {
+                    $blueprint->dropUnique('settings_key_unique');
                 }
 
                 // Tambah unique composite: satu key hanya boleh ada sekali per sekolah
-                $blueprint->unique(['school_id', 'key'], 'uq_settings_school_key');
+                if (!Schema::hasIndex('settings', 'uq_settings_school_key')) {
+                    $blueprint->unique(['school_id', 'key'], 'uq_settings_school_key');
+                }
             });
         }
     }

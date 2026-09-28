@@ -15,8 +15,11 @@ use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Carbon\Carbon;
 
+use App\Http\Controllers\Concerns\HasSchoolScope;
+
 class DashboardController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         if ($request->user()->hasRole('Kepala Sekolah')) {
@@ -76,9 +79,11 @@ class DashboardController extends Controller
         if ($classId) $consultationQuery->where('class_id', $classId);
 
         // Cache stats selama 5 menit — data absensi tidak berubah setiap detik
-        $statsCacheKey = 'dashboard_stats_' . $today->toDateString() . '_class_' . ($classId ?: 'all');
+        // Kunci cache per-sekolah agar data sekolah berbeda tidak campur
+        $schoolId = $this->schoolId();
+        $statsCacheKey = 'dashboard_stats_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_class_' . ($classId ?: 'all');
         try {
-            $stats = Cache::remember($statsCacheKey, 300, function () use ($studentsQuery, $consultationQuery) {
+            $stats = Cache::remember($statsCacheKey, 300, function () use ($studentsQuery, $consultationQuery, $schoolId) {
                 $todayAttendances = (clone $studentsQuery)->get()->groupBy('student_id');
                 
                 $presentCount = 0;
@@ -280,6 +285,7 @@ class DashboardController extends Controller
                 $q->where('last_activity', '>=', now()->subMinutes(5)->getTimestamp());
             })->select('id', 'name', 'email', 'avatar')->get();
 
+            // lastLogins: hanya tampilkan user dari sekolah yang sama
             $lastLogins = User::whereNotNull('last_login_at')
                 ->latest('last_login_at')
                 ->select('id', 'name', 'email', 'avatar', 'last_login_at')
@@ -300,7 +306,8 @@ class DashboardController extends Controller
 
         // 5. Inventory Summary — 1 query GROUP BY, bukan 5 query terpisah
         try {
-            $invGrouped = Cache::remember('inventory_stats', 300, function () {
+            $invCacheKey = 'inventory_stats_' . ($this->schoolId() ?? 'all');
+            $invGrouped = Cache::remember($invCacheKey, 300, function () {
                 return InventoryBarcode::select('status', DB::raw('count(*) as total'))
                     ->groupBy('status')
                     ->pluck('total', 'status')

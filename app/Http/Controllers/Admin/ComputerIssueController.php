@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\ComputerIssue;
 use App\Models\ComputerUnit;
 use App\Services\ImageCompressionService;
@@ -12,6 +13,7 @@ use Inertia\Inertia;
 
 class ComputerIssueController extends Controller
 {
+    use HasSchoolScope;
     /**
      * Display a listing of the reported computer issues.
      */
@@ -162,3 +164,4 @@ class ComputerIssueController extends Controller
         return back()->with('success', 'Tiket kerusakan sekarang dalam proses perbaikan.');
     }
 }
+

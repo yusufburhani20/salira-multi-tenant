@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Concerns\BelongsToSchool;
 
 class Subject extends Model
 {
+    use BelongsToSchool;
     protected $fillable = ['code', 'name', 'description', 'kkm'];
 
     public function academicClasses()

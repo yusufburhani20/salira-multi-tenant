@@ -1,14 +1,16 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Geofence;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class GeofenceController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         $geofences = Geofence::latest()->get();
@@ -67,3 +69,4 @@ class GeofenceController extends Controller
         return back()->with('success', 'Geofence deleted successfully.');
     }
 }
+

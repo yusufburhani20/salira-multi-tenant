@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Bill;
 use App\Models\AcademicClass;
 use App\Notifications\BillGeneratedNotification;
@@ -14,6 +15,7 @@ use Illuminate\Support\Str;
 
 class BillController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         $bills = Bill::with('student')->latest()->paginate(10);
@@ -153,3 +155,4 @@ class BillController extends Controller
         return redirect()->back()->with('success', 'Kontak admin keuangan berhasil diperbarui.');
     }
 }
+

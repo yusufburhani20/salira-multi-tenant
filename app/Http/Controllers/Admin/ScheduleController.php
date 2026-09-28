@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Schedule;
 use App\Models\AcademicClass;
 use App\Models\User;
@@ -11,6 +12,7 @@ use Inertia\Inertia;
 
 class ScheduleController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         $schedules = Schedule::with(['academicClass', 'teacher'])
@@ -92,3 +94,4 @@ class ScheduleController extends Controller
         return back()->with('success', 'Jadwal pelajaran berhasil dihapus.');
     }
 }
+

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\AcademicYear;
 use App\Models\Semester;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Inertia\Inertia;
 
 class AcademicYearController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         return Inertia::render('Admin/AcademicYears/Index', [
@@ -30,7 +32,7 @@ class AcademicYearController extends Controller
                 AcademicYear::where('is_active', true)->update(['is_active' => false]);
             }
 
-            $academicYear = AcademicYear::create($validated);
+            $academicYear = AcademicYear::create(array_merge($validated, $this->schoolContext()));
 
             // Parse year from name (e.g. "2025/2026" -> 2025)
             $startYear = (int) substr($academicYear->name, 0, 4);

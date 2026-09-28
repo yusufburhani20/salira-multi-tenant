@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Bill;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -11,6 +12,7 @@ use Carbon\Carbon;
 
 class FinanceController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         // 1. Revenue by Month (Last 12 months)
@@ -95,3 +97,4 @@ class FinanceController extends Controller
         ]);
     }
 }
+

@@ -1,9 +1,10 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Exports\EventAttendanceExport;
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Event;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
@@ -14,6 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class EventController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         $events = Event::with('creator')
@@ -148,4 +150,5 @@ class EventController extends Controller
         return $pdf->stream('laporan_event_' . Str::slug($event->name) . '.pdf');
     }
 }
+
 

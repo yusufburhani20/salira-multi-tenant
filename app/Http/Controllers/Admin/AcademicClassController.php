@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\AcademicClass;
 use App\Models\AcademicYear;
 use App\Models\User;
@@ -14,6 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class AcademicClassController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         $activeYear = AcademicYear::where('is_active', true)->first();
@@ -58,11 +60,11 @@ class AcademicClassController extends Controller
             ?? AcademicYear::where('is_active', true)->value('id')
             ?? AcademicYear::firstOrCreate(['name' => date('Y') . '/' . (date('Y') + 1)], ['is_active' => true])->id;
 
-        AcademicClass::create([
+        AcademicClass::create(array_merge([
             'academic_year_id'    => $academicYearId,
             'name'                => $validated['name'],
             'homeroom_teacher_id' => $validated['homeroom_teacher_id'],
-        ]);
+        ], $this->schoolContext()));
 
         return redirect()->back()->with('success', 'Data kelas berhasil ditambahkan.');
     }

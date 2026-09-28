@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class InventoryCategory extends Model
 {
+    use BelongsToSchool;
+
     protected $guarded = ['id'];
 
     public function items()
@@ -13,3 +15,4 @@ class InventoryCategory extends Model
         return $this->hasMany(InventoryItem::class, 'category_id');
     }
 }
+

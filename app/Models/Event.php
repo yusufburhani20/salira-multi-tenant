@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -9,6 +9,8 @@ class Event extends Model
 {
     use HasFactory;
 
+    use BelongsToSchool;
+
     protected $fillable = [
         'name',
         'description',
@@ -18,6 +20,8 @@ class Event extends Model
         'is_active',
         'created_by',
     ];
+
+    use BelongsToSchool;
 
     protected $casts = [
         'date' => 'date:Y-m-d',
@@ -34,3 +38,4 @@ class Event extends Model
         return $this->hasMany(EventAttendance::class);
     }
 }
+

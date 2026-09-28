@@ -7,48 +7,105 @@ use Illuminate\Support\Facades\Cache;
 
 class Setting extends Model
 {
-    protected $fillable = ['key', 'value'];
+    protected $fillable = ['school_id', 'key', 'value'];
 
     /**
-     * Cache key untuk semua settings.
+     * Cache key prefix untuk settings.
+     * Dipisahkan per school_id agar settings tiap sekolah tidak bentrok.
      * Cache di-invalidate otomatis saat setting diubah via set().
      */
-    const CACHE_KEY = 'app_settings_all';
     const CACHE_TTL = 3600; // 1 jam
 
     /**
-     * Ambil satu setting berdasarkan key.
+     * Bangun cache key berdasarkan school_id.
+     * Sekolah berbeda = cache key berbeda = data tidak campur.
+     */
+    protected static function cacheKey(?int $schoolId = null): string
+    {
+        $id = $schoolId ?? static::resolveSchoolId();
+        return 'app_settings_school_' . ($id ?? 'global');
+    }
+
+    /**
+     * Resolusi school_id dari auth user yang sedang login.
+     */
+    protected static function resolveSchoolId(): ?int
+    {
+        return auth()->check() ? auth()->user()->school_id : null;
+    }
+
+    /**
+     * Ambil satu setting berdasarkan key, difilter per sekolah.
      * Semua setting di-load sekaligus dalam satu query dan di-cache.
      * Query ke DB hanya terjadi 1x per jam, bukan setiap pemanggilan.
+     *
+     * Contoh: Setting::get('school_name')
      */
-    public static function get($key, $default = null)
+    public static function get($key, $default = null, ?int $schoolId = null): mixed
     {
-        $all = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
-            return self::pluck('value', 'key')->toArray();
+        $schoolId ??= static::resolveSchoolId();
+        $cacheKey = static::cacheKey($schoolId);
+
+        $all = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($schoolId) {
+            return static::when(
+                $schoolId !== null,
+                fn($q) => $q->where('school_id', $schoolId),
+                fn($q) => $q->whereNull('school_id'),
+            )->pluck('value', 'key')->toArray();
         });
 
         return $all[$key] ?? $default;
     }
 
     /**
-     * Simpan setting dan invalidate cache agar perubahan langsung terlihat.
+     * Simpan setting untuk sekolah yang aktif dan invalidate cache.
      */
-    public static function set($key, $value)
+    public static function set($key, $value, ?int $schoolId = null): static
     {
-        $result = self::updateOrCreate(['key' => $key], ['value' => $value]);
-        Cache::forget(self::CACHE_KEY);
+        $schoolId ??= static::resolveSchoolId();
+
+        $result = static::updateOrCreate(
+            ['school_id' => $schoolId, 'key' => $key],
+            ['value' => $value]
+        );
+
+        Cache::forget(static::cacheKey($schoolId));
+
         return $result;
     }
 
     /**
-     * Ambil semua settings sekaligus (untuk halaman Pengaturan).
+     * Ambil semua settings sekaligus untuk sekolah yang aktif.
+     * Digunakan di halaman Pengaturan.
      */
-    public static function all($columns = ['*'])
+    public static function all($columns = ['*']): \Illuminate\Database\Eloquent\Collection
     {
-        $items = Cache::remember(self::CACHE_KEY . '_collection_array', self::CACHE_TTL, function () {
-            return parent::all()->toArray();
+        $schoolId = static::resolveSchoolId();
+        $cacheKey = static::cacheKey($schoolId) . '_collection';
+
+        $items = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($schoolId) {
+            return static::when(
+                $schoolId !== null,
+                fn($q) => $q->where('school_id', $schoolId),
+                fn($q) => $q->whereNull('school_id'),
+            )->get()->toArray();
         });
 
-        return Setting::hydrate($items);
+        return static::hydrate($items);
     }
+
+    /**
+     * Invalidate semua cache settings untuk sekolah tertentu.
+     */
+    public static function clearCache(?int $schoolId = null): void
+    {
+        $schoolId ??= static::resolveSchoolId();
+        $key = static::cacheKey($schoolId);
+        Cache::forget($key);
+        Cache::forget($key . '_collection');
+    }
+
+    // ── Backward-compat: nama cache lama ─────────────────────────────────────
+    // Dihapus saat semua code sudah migrasi ke multi-tenant
+    const CACHE_KEY = 'app_settings_all'; // @deprecated — gunakan cacheKey()
 }

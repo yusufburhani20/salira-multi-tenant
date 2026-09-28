@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class DriveFolder extends Model
 {
     use HasFactory;
+
+    use BelongsToSchool;
 
     protected $fillable = ['owner_type', 'owner_id', 'name', 'parent_id', 'is_public', 'public_token'];
 
@@ -41,3 +43,4 @@ class DriveFolder extends Model
         return $this->hasMany(DriveFolderShare::class);
     }
 }
+

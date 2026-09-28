@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -8,7 +8,11 @@ use App\Enums\InventoryStatus;
 
 class InventoryItem extends Model
 {
+    use BelongsToSchool;
+
     protected $guarded = ['id'];
+    use BelongsToSchool;
+
     protected $casts = [
         'condition' => InventoryCondition::class,
         'status' => InventoryStatus::class,
@@ -30,3 +34,4 @@ class InventoryItem extends Model
         return $this->hasMany(InventoryLog::class, 'item_id');
     }
 }
+

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\User;
 use Spatie\Permission\Models\Role;
 use Illuminate\Http\Request;
@@ -16,6 +17,7 @@ use App\Imports\UsersImport;
 
 class UserController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         $users = User::with('roles')->latest()->get();
@@ -46,13 +48,14 @@ class UserController extends Controller
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'nip' => $request->nip,
-            'phone' => $request->phone,
+            'name'        => $request->name,
+            'email'       => $request->email,
+            'nip'         => $request->nip,
+            'phone'       => $request->phone,
             'telegram_id' => $request->telegram_id,
-            'password' => Hash::make('password'),
-            'status' => $request->status,
+            'password'    => Hash::make('password'),
+            'status'      => $request->status,
+            'school_id'   => $this->schoolId(),
         ]);
 
         if ($request->has('roles')) {
@@ -147,3 +150,4 @@ class UserController extends Controller
         ]);
     }
 }
+

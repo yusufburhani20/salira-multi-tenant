@@ -5,12 +5,13 @@ namespace App\Models;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Enums\Gender;
 use App\Enums\StudentStatus;
+use App\Models\Concerns\BelongsToSchool;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class Student extends Authenticatable
 {
-    use HasApiTokens, Notifiable;
+    use HasApiTokens, Notifiable, BelongsToSchool;
 
     protected $guarded = ['id'];
     protected $casts = [

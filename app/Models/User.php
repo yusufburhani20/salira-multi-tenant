@@ -7,12 +7,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use App\Enums\UserStatus;
-
+use App\Models\Concerns\BelongsToSchool;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, HasRoles;
+    use HasApiTokens, HasFactory, Notifiable, HasRoles, BelongsToSchool;
 
     /**
      * Override Spatie's hasRole to provide a standardized wrapper

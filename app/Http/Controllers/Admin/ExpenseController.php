@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Expense;
 use App\Models\FinanceCategory;
 use Illuminate\Http\Request;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Storage;
 
 class ExpenseController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         return Inertia::render('Admin/Finance/Expenses/Index', [
@@ -74,3 +76,4 @@ class ExpenseController extends Controller
         return redirect()->back()->with('success', 'Catatan pengeluaran berhasil dihapus');
     }
 }
+

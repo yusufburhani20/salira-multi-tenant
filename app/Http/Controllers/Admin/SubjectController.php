@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Subject;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use App\Imports\SubjectImport;
 
 class SubjectController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         $query = Subject::with('academicClasses');
@@ -46,12 +48,12 @@ class SubjectController extends Controller
             'academic_class_ids.*' => 'exists:academic_classes,id',
         ]);
 
-        $subject = Subject::create([
-            'code' => $validated['code'],
-            'name' => $validated['name'],
+        $subject = Subject::create(array_merge([
+            'code'        => $validated['code'],
+            'name'        => $validated['name'],
             'description' => $validated['description'] ?? null,
-            'kkm' => $validated['kkm'] ?? 75,
-        ]);
+            'kkm'         => $validated['kkm'] ?? 75,
+        ], $this->schoolContext()));
 
         if (isset($validated['academic_class_ids'])) {
             $subject->academicClasses()->sync($validated['academic_class_ids']);

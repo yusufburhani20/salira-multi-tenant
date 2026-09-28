@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -6,9 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Expense extends Model
 {
+    use BelongsToSchool;
+
     protected $fillable = [
         'category_id', 'amount', 'date', 'description', 'recorded_by', 'attachment'
     ];
+
+    use BelongsToSchool;
 
     protected $casts = [
         'date' => 'date',
@@ -25,3 +29,4 @@ class Expense extends Model
         return $this->belongsTo(User::class, 'recorded_by');
     }
 }
+

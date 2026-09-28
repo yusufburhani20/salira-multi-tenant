@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\InventoryCategory;
 use App\Models\InventoryItem;
 use App\Models\InventoryLog;
@@ -15,6 +16,7 @@ use App\Exports\InventoryExport;
 
 class InventoryController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         $query = InventoryItem::with('category')
@@ -186,3 +188,4 @@ class InventoryController extends Controller
         return $pdf->stream('laporan_inventaris.pdf');
     }
 }
+

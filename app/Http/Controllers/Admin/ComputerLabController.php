@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\ComputerLab;
 use App\Models\ComputerUnit;
 use App\Models\ComputerIssue;
@@ -15,6 +16,7 @@ use Inertia\Inertia;
 
 class ComputerLabController extends Controller
 {
+    use HasSchoolScope;
     /**
      * Display a listing of the computer labs.
      */
@@ -269,3 +271,4 @@ class ComputerLabController extends Controller
         return $pdf->stream('stock-opname-' . str_replace(' ', '_', $lab->name) . '-' . date('Ymd') . '.pdf');
     }
 }
+

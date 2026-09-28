@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class FinanceCategory extends Model
 {
+    use BelongsToSchool;
+
     protected $fillable = ['name', 'type', 'description'];
 
     public function expenses()
@@ -18,3 +20,4 @@ class FinanceCategory extends Model
         return $this->hasMany(Bill::class, 'category_id');
     }
 }
+

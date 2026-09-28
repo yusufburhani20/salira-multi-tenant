@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Announcement;
 use App\Models\Student;
 use App\Notifications\AnnouncementNotification;
@@ -11,6 +12,7 @@ use Inertia\Inertia;
 
 class AnnouncementController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         return Inertia::render('Admin/Announcements/Index', [
@@ -70,3 +72,4 @@ class AnnouncementController extends Controller
         return back()->with('success', 'Pengumuman berhasil dihapus.');
     }
 }
+

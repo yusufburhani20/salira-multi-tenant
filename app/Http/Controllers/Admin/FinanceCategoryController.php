@@ -1,14 +1,16 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\FinanceCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class FinanceCategoryController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         return Inertia::render('Admin/Finance/Categories/Index', [
@@ -48,3 +50,4 @@ class FinanceCategoryController extends Controller
         return redirect()->back()->with('success', 'Kategori berhasil dihapus');
     }
 }
+

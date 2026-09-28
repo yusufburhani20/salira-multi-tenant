@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Setting;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,6 +14,7 @@ use App\Models\User;
 
 class SettingController extends Controller
 {
+    use HasSchoolScope;
     public function index()
     {
         return Inertia::render('Admin/Settings/Index', [
@@ -346,3 +348,4 @@ class SettingController extends Controller
         }
     }
 }
+

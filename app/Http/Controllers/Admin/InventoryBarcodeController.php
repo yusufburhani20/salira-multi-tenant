@@ -1,8 +1,9 @@
-<?php
+﻿<?php
 
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\InventoryBarcode;
 use App\Models\InventoryItem;
 use App\Models\InventoryLog;
@@ -12,6 +13,7 @@ use Inertia\Inertia;
 
 class InventoryBarcodeController extends Controller
 {
+    use HasSchoolScope;
     /**
      * Generate & store new barcode units for an item.
      */
@@ -165,3 +167,4 @@ class InventoryBarcodeController extends Controller
         ]);
     }
 }
+

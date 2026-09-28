@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -6,11 +6,15 @@ use Illuminate\Database\Eloquent\Model;
 
 class Bill extends Model
 {
+    use BelongsToSchool;
+
     protected $fillable = [
         'bill_number', 'student_id', 'category_id', 'title', 'month', 'year', 'amount',
         'status', 'snap_token', 'snap_token_expires_at', 'paid_at',
         'payment_method', 'admin_fee', 'midtrans_order_id',
     ];
+
+    use BelongsToSchool;
 
     protected $casts = [
         'paid_at'               => 'datetime',
@@ -28,3 +32,4 @@ class Bill extends Model
         return $this->belongsTo(FinanceCategory::class, 'category_id');
     }
 }
+

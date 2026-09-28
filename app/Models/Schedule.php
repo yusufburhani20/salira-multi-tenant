@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -7,7 +7,11 @@ use App\Enums\DayOfWeek;
 
 class Schedule extends Model
 {
+    use BelongsToSchool;
+
     protected $guarded = ['id'];
+    use BelongsToSchool;
+
     protected $casts = [
         'day' => DayOfWeek::class,
     ];
@@ -27,3 +31,4 @@ class Schedule extends Model
         return $this->hasMany(ClassAgenda::class);
     }
 }
+

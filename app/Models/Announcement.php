@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 namespace App\Models;
 
@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Announcement extends Model
 {
+    use BelongsToSchool;
+
     protected $fillable = [
         'title',
         'content',
@@ -15,3 +17,4 @@ class Announcement extends Model
         'is_active',
     ];
 }
+

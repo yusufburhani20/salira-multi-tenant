@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Concerns\HasSchoolScope;
 use App\Models\Student;
 use App\Models\AcademicClass;
 use App\Exports\StudentsExport;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Hash;
 
 class StudentController extends Controller
 {
+    use HasSchoolScope;
     public function index(Request $request)
     {
         $query = Student::with('academicClasses')->orderBy('name');
@@ -67,7 +69,8 @@ class StudentController extends Controller
         }
 
         $student = Student::create(array_merge($studentData, [
-            'password' => Hash::make($validated['nisn']),
+            'password'  => Hash::make($validated['nisn']),
+            'school_id' => $this->schoolId(),
         ]));
 
         if (!empty($validated['academic_class_id'])) {
@@ -427,4 +430,5 @@ class StudentController extends Controller
         return rmdir($dir);
     }
 }
+
 

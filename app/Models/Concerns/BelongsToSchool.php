@@ -34,7 +34,8 @@ trait BelongsToSchool
     {
         static::addGlobalScope('school', function (Builder $builder) {
             // 1. Tidak ada user yang login (artisan, queue, console) — skip filter
-            if (! auth()->check()) {
+            // Gunakan hasUser() untuk mencegah infinite loop saat framework mencoba meload User dari session.
+            if (! auth()->hasUser()) {
                 return;
             }
 

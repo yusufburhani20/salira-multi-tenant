@@ -16,10 +16,10 @@ interface User {
     phone: string | null;
     telegram_id: string | null;
     status: string;
-    roles: Role[];
+    school_id?: number | null;
 }
 
-export default function UserIndex({ auth, users, roles, statuses }: PageProps<{ users: User[], roles: string[], statuses: {value: string, label: string}[] }>) {
+export default function UserIndex({ auth, users, roles, statuses, schools, isSuperAdmin }: PageProps<{ users: User[], roles: string[], statuses: {value: string, label: string}[], schools?: {id: number, name: string}[], isSuperAdmin?: boolean }>) {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<User | null>(null);
     const [search, setSearch] = useState('');
@@ -38,6 +38,7 @@ export default function UserIndex({ auth, users, roles, statuses }: PageProps<{ 
         phone: '',
         telegram_id: '',
         status: statuses[0]?.value || 'active',
+        school_id: '' as number | string,
         roles: [] as string[],
         reset_password_default: false,
         reset_password_email: false,
@@ -58,6 +59,7 @@ export default function UserIndex({ auth, users, roles, statuses }: PageProps<{ 
                 phone: user.phone || '',
                 telegram_id: user.telegram_id || '',
                 status: user.status,
+                school_id: user.school_id || '',
                 roles: user.roles.map(r => r.name),
                 reset_password_default: false,
                 reset_password_email: false,
@@ -71,6 +73,7 @@ export default function UserIndex({ auth, users, roles, statuses }: PageProps<{ 
                 phone: '',
                 telegram_id: '',
                 status: 'active',
+                school_id: '',
                 roles: [],
                 reset_password_default: false,
                 reset_password_email: false,
@@ -290,6 +293,19 @@ export default function UserIndex({ auth, users, roles, statuses }: PageProps<{ 
                                             </select>
                                             {errors.status && <p className="text-red-500 text-xs mt-1">{errors.status}</p>}
                                         </div>
+
+                                        {isSuperAdmin && schools && (
+                                            <div>
+                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">School (Sekolah)</label>
+                                                <select value={data.school_id} onChange={e => setData('school_id', e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                                                    <option value="">-- Pilih Sekolah -- (Kosongkan jika Super Admin)</option>
+                                                    {schools.map(school => (
+                                                        <option key={school.id} value={school.id}>{school.name}</option>
+                                                    ))}
+                                                </select>
+                                                {errors.school_id && <p className="text-red-500 text-xs mt-1">{errors.school_id}</p>}
+                                            </div>
+                                        )}
 
                                         <div>
                                             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Roles & Permissions</label>

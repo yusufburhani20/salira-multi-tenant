@@ -28,10 +28,17 @@ class UserController extends Controller
             $statuses[] = ['value' => $case->value, 'label' => $case->label()];
         }
 
+        $schools = [];
+        if (auth()->user()->hasRole('Super Admin')) {
+            $schools = \App\Models\School::orderBy('name')->get(['id', 'name']);
+        }
+
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
             'roles' => $roles,
             'statuses' => $statuses,
+            'schools' => $schools,
+            'isSuperAdmin' => auth()->user()->hasRole('Super Admin'),
         ]);
     }
 
@@ -45,7 +52,13 @@ class UserController extends Controller
             'telegram_id' => 'nullable|string|max:100',
             'status' => ['required', Rule::enum(UserStatus::class)],
             'roles' => 'nullable|array',
+            'school_id' => 'nullable|exists:schools,id',
         ]);
+
+        $schoolId = $this->schoolId();
+        if (auth()->user()->hasRole('Super Admin')) {
+            $schoolId = $request->school_id;
+        }
 
         $user = User::create([
             'name'        => $request->name,
@@ -55,7 +68,7 @@ class UserController extends Controller
             'telegram_id' => $request->telegram_id,
             'password'    => Hash::make('password'),
             'status'      => $request->status,
-            'school_id'   => $this->schoolId(),
+            'school_id'   => $schoolId,
         ]);
 
         if ($request->has('roles')) {
@@ -75,16 +88,23 @@ class UserController extends Controller
             'telegram_id' => 'nullable|string|max:100',
             'status' => ['required', Rule::enum(UserStatus::class)],
             'roles' => 'nullable|array',
+            'school_id' => 'nullable|exists:schools,id',
         ]);
 
-        $user->update([
+        $updateData = [
             'name' => $request->name,
             'email' => $request->email,
             'nip' => $request->nip,
             'phone' => $request->phone,
             'telegram_id' => $request->telegram_id,
             'status' => $request->status,
-        ]);
+        ];
+
+        if (auth()->user()->hasRole('Super Admin')) {
+            $updateData['school_id'] = $request->school_id;
+        }
+
+        $user->update($updateData);
 
         if ($request->has('roles')) {
             $user->syncRoles($request->roles);

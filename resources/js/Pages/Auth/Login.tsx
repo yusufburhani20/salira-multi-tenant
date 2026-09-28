@@ -1,4 +1,4 @@
-import Checkbox from '@/Components/Checkbox';
+﻿import Checkbox from '@/Components/Checkbox';
 import InputError from '@/Components/InputError';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { FormEventHandler, useState, useEffect, useRef } from 'react';
@@ -31,7 +31,7 @@ export default function Login({
         });
     };
 
-    // â”€â”€ Event Attendance Logic â”€â”€
+    // -- Event Attendance Logic --
     const { flash } = usePage().props as any;
     const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
     const [showEventModal, setShowEventModal] = useState(false);
@@ -272,9 +272,9 @@ export default function Login({
 
     return (
         <div className="min-h-screen font-sans bg-slate-100 dark:bg-slate-900 transition-colors">
-            <Head title="Masuk â€” SALIRA" />
+            <Head title="Masuk - SALIRA" />
 
-            {/* â”€â”€ MOBILE LAYOUT (< md) â”€â”€ */}
+            {/* -- MOBILE LAYOUT (< md) -- */}
             <div className="flex flex-col min-h-screen md:hidden">
                 {/* Hero Header */}
                 <div className="bg-gradient-to-br from-[#1a40b0] to-[#2563EB] px-6 pt-12 pb-20 flex flex-col gap-3 relative overflow-hidden">
@@ -391,11 +391,11 @@ export default function Login({
                 </div>
             </div>
 
-            {/* â”€â”€ DESKTOP LAYOUT (â‰¥ md) â”€â”€ */}
+            {/* -- DESKTOP LAYOUT (>= md) -- */}
             <div className="hidden md:flex min-h-screen items-center justify-center p-8">
                 <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/20">
 
-                    {/* Left â€” Brand Panel */}
+                    {/* Left - Brand Panel */}
                     <div className="w-5/12 bg-gradient-to-br from-[#1a40b0] to-[#2563EB] p-10 flex flex-col justify-between relative overflow-hidden">
                         <div className="absolute inset-0 pointer-events-none">
                             <div className="absolute -top-16 -right-16 w-64 h-64 bg-white/5 rounded-full" />
@@ -441,7 +441,7 @@ export default function Login({
                         </div>
                     </div>
 
-                    {/* Right â€” Login Form */}
+                    {/* Right - Login Form */}
                     <div className="w-7/12 bg-white dark:bg-slate-800 p-10 flex flex-col justify-center">
                         <div className="flex items-center gap-2 mb-10 mx-auto">
                             <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-8 w-auto" />
@@ -535,7 +535,7 @@ export default function Login({
                 </div>
             </div>
 
-            {/* â”€â”€ EVENT ATTENDANCE MODAL â”€â”€ */}
+            {/* -- EVENT ATTENDANCE MODAL -- */}
             {showEventModal && (
                 <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-end md:items-center justify-center"
                     onClick={() => setShowUserDropdown(false)}>

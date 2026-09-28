@@ -46,9 +46,10 @@ class StudentController extends Controller
 
     public function store(Request $request)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
             'nisn'              => 'required|string|unique:students',
-            'nis'               => 'nullable|string|unique:students',
+            'nis'               => ['nullable', 'string', \Illuminate\Validation\Rule::unique('students', 'nis')->where('school_id', $schoolId)],
             'name'              => 'required|string|max:255',
             'gender'            => 'required|in:L,P',
             'status'            => 'required|in:' . implode(',', array_column(StudentStatus::cases(), 'value')),
@@ -82,9 +83,10 @@ class StudentController extends Controller
 
     public function update(Request $request, Student $student)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
             'nisn'              => 'required|string|unique:students,nisn,' . $student->id,
-            'nis'               => 'nullable|string|unique:students,nis,' . $student->id,
+            'nis'               => ['nullable', 'string', \Illuminate\Validation\Rule::unique('students', 'nis')->ignore($student->id)->where('school_id', $schoolId)],
             'name'              => 'required|string|max:255',
             'gender'            => 'required|in:L,P',
             'status'            => 'required|in:' . implode(',', array_column(StudentStatus::cases(), 'value')),

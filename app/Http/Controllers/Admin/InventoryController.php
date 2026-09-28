@@ -62,9 +62,10 @@ class InventoryController extends Controller
 
     public function store(Request $request)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
             'category_id'    => 'required|exists:inventory_categories,id',
-            'code'           => 'required|string|max:50|unique:inventory_items,code',
+            'code'           => ['required', 'string', 'max:50', \Illuminate\Validation\Rule::unique('inventory_items', 'code')->where('school_id', $schoolId)],
             'name'           => 'required|string|max:191',
             'description'    => 'nullable|string',
             'brand'          => 'nullable|string|max:100',
@@ -82,9 +83,10 @@ class InventoryController extends Controller
 
     public function update(Request $request, InventoryItem $item)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
             'category_id'    => 'required|exists:inventory_categories,id',
-            'code'           => 'required|string|max:50|unique:inventory_items,code,' . $item->id,
+            'code'           => ['required', 'string', 'max:50', \Illuminate\Validation\Rule::unique('inventory_items', 'code')->ignore($item->id)->where('school_id', $schoolId)],
             'name'           => 'required|string|max:191',
             'description'    => 'nullable|string',
             'brand'          => 'nullable|string|max:100',
@@ -140,8 +142,9 @@ class InventoryController extends Controller
     // Category CRUD
     public function storeCategory(Request $request)
     {
+        $schoolId = $this->schoolId();
         $request->validate([
-            'code' => 'required|string|max:20|unique:inventory_categories,code',
+            'code' => ['required', 'string', 'max:20', \Illuminate\Validation\Rule::unique('inventory_categories', 'code')->where('school_id', $schoolId)],
             'name' => 'required|string|max:191',
         ]);
         InventoryCategory::create(array_merge($request->only('code', 'name', 'description'), $this->schoolContext()));

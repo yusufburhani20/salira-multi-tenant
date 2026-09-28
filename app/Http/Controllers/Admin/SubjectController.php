@@ -39,8 +39,9 @@ class SubjectController extends Controller
 
     public function store(Request $request)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
-            'code' => 'required|string|unique:subjects,code',
+            'code' => ['required', 'string', \Illuminate\Validation\Rule::unique('subjects', 'code')->where('school_id', $schoolId)],
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'kkm' => 'required|integer|min:0|max:100',
@@ -64,8 +65,9 @@ class SubjectController extends Controller
 
     public function update(Request $request, Subject $subject)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
-            'code' => 'required|string|unique:subjects,code,' . $subject->id,
+            'code' => ['required', 'string', \Illuminate\Validation\Rule::unique('subjects', 'code')->ignore($subject->id)->where('school_id', $schoolId)],
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'kkm' => 'required|integer|min:0|max:100',

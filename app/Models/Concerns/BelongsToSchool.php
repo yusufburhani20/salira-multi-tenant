@@ -33,16 +33,24 @@ trait BelongsToSchool
     protected static function bootBelongsToSchool(): void
     {
         static::addGlobalScope('school', function (Builder $builder) {
+            $user = null;
+
+            // Check multiple guards to support Admin (web), Portal (student), and API (sanctum)
+            if (auth()->guard('web')->hasUser()) {
+                $user = auth()->guard('web')->user();
+            } elseif (auth()->guard('student')->hasUser()) {
+                $user = auth()->guard('student')->user();
+            } elseif (auth()->guard('sanctum')->hasUser()) {
+                $user = auth()->guard('sanctum')->user();
+            }
+
             // 1. Tidak ada user yang login (artisan, queue, console) — skip filter
-            // Gunakan hasUser() untuk mencegah infinite loop saat framework mencoba meload User dari session.
-            if (! auth()->hasUser()) {
+            if (! $user) {
                 return;
             }
 
-            $user = auth()->user();
-
             // 2. Super Admin Yayasan (school_id = null) — bisa lihat semua, skip filter
-            if ($user->school_id === null) {
+            if (!isset($user->school_id) || $user->school_id === null) {
                 return;
             }
 

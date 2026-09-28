@@ -22,8 +22,9 @@ class AcademicYearController extends Controller
 
     public function store(Request $request)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:academic_years,name',
+            'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('academic_years', 'name')->where('school_id', $schoolId)],
             'is_active' => 'boolean',
         ]);
 
@@ -63,8 +64,9 @@ class AcademicYearController extends Controller
 
     public function update(Request $request, AcademicYear $academicYear)
     {
+        $schoolId = $this->schoolId();
         $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:academic_years,name,' . $academicYear->id,
+            'name' => ['required', 'string', 'max:255', \Illuminate\Validation\Rule::unique('academic_years', 'name')->ignore($academicYear->id)->where('school_id', $schoolId)],
         ]);
 
         DB::transaction(function () use ($academicYear, $validated) {

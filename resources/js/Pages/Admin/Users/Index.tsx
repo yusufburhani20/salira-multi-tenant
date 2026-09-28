@@ -16,6 +16,7 @@ interface User {
     phone: string | null;
     telegram_id: string | null;
     status: string;
+    roles: Role[];
     school_id?: number | null;
 }
 

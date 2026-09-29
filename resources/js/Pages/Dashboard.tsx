@@ -106,28 +106,21 @@ export default function Dashboard({
 
             <div className="space-y-6">
                 
-                {/* Mobile Header (Title & Class Filter) */}
-                <div className="lg:hidden flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white dark:bg-slate-800 p-4 sm:p-5 rounded-2xl border border-slate-200/65 dark:border-slate-700/60 shadow-md shadow-slate-100 dark:shadow-none">
-                    <div>
-                        <h2 className="text-lg font-black leading-tight text-slate-800 dark:text-slate-200 tracking-tight animate-fade-in">
-                            Dashboard Overview
-                        </h2>
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">Pantau seluruh aktivitas akademik secara real-time</p>
-                    </div>
-                    <div className="flex items-center gap-2 bg-slate-50 dark:bg-slate-900/50 px-3 py-2 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm w-full sm:w-auto">
-                        <FunnelIcon className="w-4 h-4 text-slate-400 shrink-0" />
-                        <select 
-                            value={classId}
-                            onChange={(e) => handleFilterChange(e.target.value, startDate, endDate)}
-                            className="text-xs font-semibold border-none bg-transparent focus:ring-0 text-slate-600 dark:text-slate-300 cursor-pointer py-0 pl-1 pr-7 w-full sm:w-auto"
-                        >
-                            <option value="">Semua Kelas</option>
-                            {classes?.map((c: any) => (
-                                <option key={c.id} value={c.id}>{c.name}</option>
-                            ))}
-                        </select>
-                    </div>
+            {/* ── MOBILE VIEW: tampilkan MobileDashboard ── */}
+                <div className="lg:hidden">
+                    <MobileDashboard
+                        stats={stats}
+                        studentsPerClass={studentsPerClass}
+                        chartData={chartData}
+                        activeSemester={activeSemester}
+                        attendanceRanking={attendanceRanking}
+                        assessmentRanking={assessmentRanking}
+                        inventoryStats={inventoryStats}
+                    />
                 </div>
+
+                {/* ── DESKTOP VIEW: semua section di bawah hanya tampil di lg+ ── */}
+                <div className="hidden lg:block space-y-6">
                 {/* ── SECTION 1: Welcome Banner with Quick Actions ── */}
                 {/* ── SECTION 1: HeroBanner ── */}
                 <section className="relative overflow-hidden rounded-2xl text-white p-7 shadow-lg shadow-salira-700/10 bg-salira-700" data-purpose="hero-banner">
@@ -610,6 +603,8 @@ export default function Dashboard({
                         </div>
                     </div>
 
+                </div>
+                {/* ── END DESKTOP VIEW ── */}
                 </div>
             </div>
 

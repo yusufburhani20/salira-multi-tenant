@@ -419,39 +419,35 @@ export default function Dashboard({
                                     </div>
 
                                     {/* Chart bars area — positioned above labels */}
-                                    <div className="absolute inset-x-8 bottom-0 top-3">
-                                        <div className="mx-auto h-full flex items-end justify-between gap-3" style={{ maxWidth: Math.max(300, (chartData?.length || 0) * 85) + 'px' }}>
-                                            {chartData?.map((item: any, i: number) => (
-                                                <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
-                                                    {item.height > 0 ? (
-                                                        <div
-                                                            className="w-full max-w-[54px] bg-gradient-to-t from-salira-700 to-salira-500 rounded-t-lg transition duration-200 group-hover:brightness-110 relative"
-                                                            style={{ height: `${item.height}%` }}
-                                                        >
-                                                            <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-salira-700 bg-salira-50 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-sm">
-                                                                {item.height}%
-                                                            </span>
-                                                        </div>
-                                                    ) : (
-                                                        <div className="w-full max-w-[54px] bg-slate-200 rounded-t h-1 transition"></div>
-                                                    )}
-                                                </div>
-                                            ))}
-                                        </div>
+                                    <div className="absolute inset-x-8 bottom-0 top-3 flex items-end justify-between gap-3">
+                                        {chartData?.map((item: any, i: number) => (
+                                            <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
+                                                {item.height > 0 ? (
+                                                    <div
+                                                        className="w-full max-w-[80px] bg-gradient-to-t from-salira-700 to-salira-500 rounded-t-lg transition duration-200 group-hover:brightness-110 relative"
+                                                        style={{ height: `${item.height}%` }}
+                                                    >
+                                                        <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[10px] font-bold text-salira-700 bg-salira-50 px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-sm">
+                                                            {item.height}%
+                                                        </span>
+                                                    </div>
+                                                ) : (
+                                                    <div className="w-full max-w-[80px] bg-slate-200 rounded-t h-1 transition"></div>
+                                                )}
+                                            </div>
+                                        ))}
                                     </div>
                                 </div>
                                 
                                 {/* X-Axis Labels & Stats */}
-                                <div className="pl-8 pr-8 w-full" style={{ minWidth: Math.max(480, (chartData?.length || 0) * 80) + 'px' }}>
-                                    <div className="grid gap-3 text-center pt-3 pb-1 mx-auto" style={{ gridTemplateColumns: `repeat(${chartData?.length || 1}, minmax(0, 1fr))`, maxWidth: Math.max(300, (chartData?.length || 0) * 85) + 'px' }}>
-                                        {chartData?.map((item: any, i: number) => (
-                                            <div key={i}>
-                                                <div className="text-xs font-bold text-slate-800">{item.date}</div>
-                                                <div className="text-[11px] font-bold text-salira-600">{item.height}%</div>
-                                                <div className="text-[9px] text-slate-400 truncate">{item.present ?? 0} dari {item.total ?? 0}</div>
-                                            </div>
-                                        ))}
-                                    </div>
+                                <div className="grid gap-3 text-center pt-3 px-8 pb-1" style={{ gridTemplateColumns: `repeat(${chartData?.length || 1}, minmax(0, 1fr))`, minWidth: Math.max(480, (chartData?.length || 0) * 80) + 'px' }}>
+                                    {chartData?.map((item: any, i: number) => (
+                                        <div key={i}>
+                                            <div className="text-xs font-bold text-slate-800">{item.date}</div>
+                                            <div className="text-[11px] font-bold text-salira-600">{item.height}%</div>
+                                            <div className="text-[9px] text-slate-400 truncate">{item.present ?? 0} dari {item.total ?? 0}</div>
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
                         </div>

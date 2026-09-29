@@ -80,9 +80,10 @@ class PortalController extends Controller
             ->get();
 
         $academics = $scores->groupBy('subject_id')->map(function($group) {
+            $average = $group->map(fn($s) => (float) $s->score)->avg();
             return [
                 'subject' => $group->first()->subject_name,
-                'average' => round($group->avg('score'), 1),
+                'average' => round($average, 1),
                 'count'   => $group->count(),
             ];
         })->values();
@@ -418,15 +419,37 @@ class PortalController extends Controller
     {
         $student = Auth::guard('student')->user();
         
-        $scores = StudentScore::with(['assessment.subject'])
-            ->where('student_id', $student->id)
-            ->get()
-            ->groupBy(function($s) {
-                return $s->assessment->subject->name ?? 'Lainnya';
+        $scores = \Illuminate\Support\Facades\DB::table('student_scores')
+            ->where('student_scores.student_id', $student->id)
+            ->join('daily_assessments', 'student_scores.daily_assessment_id', '=', 'daily_assessments.id')
+            ->join('subjects', 'daily_assessments.subject_id', '=', 'subjects.id')
+            ->select(
+                'student_scores.id',
+                'student_scores.score',
+                'student_scores.notes',
+                'daily_assessments.date as assessment_date',
+                'daily_assessments.title as assessment_title',
+                'subjects.name as subject_name'
+            )
+            ->orderBy('daily_assessments.date', 'desc')
+            ->get();
+
+        $groupedScores = $scores->groupBy('subject_name')->map(function($group) {
+            return $group->map(function($s) {
+                return [
+                    'id' => $s->id,
+                    'score' => (float) $s->score,
+                    'notes' => $s->notes,
+                    'assessment' => [
+                        'date' => $s->assessment_date,
+                        'title' => $s->assessment_title,
+                    ]
+                ];
             });
+        });
 
         return Inertia::render('Portal/Scores', [
-            'scores' => $scores,
+            'scores' => $groupedScores,
         ]);
     }
 

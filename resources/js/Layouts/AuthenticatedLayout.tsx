@@ -859,7 +859,7 @@ export default function Authenticated({
                         <span className="material-symbols-outlined text-[22px]">how_to_reg</span>
                         <span className="font-label-sm text-label-sm mt-0.5">Kehadiran</span>
                     </Link>
-                    <Link href={route('admin.inventory.items.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('admin.inventory.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                    <Link href={route('admin.inventory.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('admin.inventory.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
                         <span className="material-symbols-outlined text-[22px]">inventory_2</span>
                         <span className="font-label-sm text-label-sm mt-0.5">Sarpras</span>
                     </Link>

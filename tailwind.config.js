@@ -25,21 +25,33 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Inter', ...defaultTheme.fontFamily.sans],
+                sans: ['"Plus Jakarta Sans"', ...defaultTheme.fontFamily.sans],
             },
             colors: {
                 primary: '#1576a7',
                 'primary-hover': '#115d84',
-                // Primary
+                // Primary (now mapping to salira colors)
                 indigo: {
-                    50: '#f0f9ff',
-                    100: '#e0f2fe',
-                    300: '#7dd3fc',
-                    400: '#38bdf8',
-                    500: '#0ea5e9',
-                    600: '#1576a7', // Primary Core
-                    800: '#075985',
-                    900: '#0c4a6e',
+                    50: '#eef6ff',
+                    100: '#dbeafe',
+                    200: '#bfdbfe',
+                    300: '#93c5fd',
+                    400: '#60a5fa',
+                    500: '#3b82f6',
+                    600: '#2563eb', // Primary Core
+                    700: '#1d4ed8',
+                    800: '#1e40af',
+                    900: '#172554',
+                },
+                salira: {
+                    50: '#eef6ff',
+                    100: '#dbeafe',
+                    200: '#bfdbfe',
+                    500: '#3b82f6',
+                    600: '#2563eb',
+                    700: '#1d4ed8',
+                    800: '#1e40af',
+                    900: '#172554',
                 },
                 violet: {
                     500: '#8b5cf6', // Primary Accent
@@ -68,5 +80,8 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        require('@tailwindcss/container-queries')
+    ],
 };

@@ -498,7 +498,8 @@ export default function Authenticated({
     ];
 
     return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+        <div className="bg-[#f8fafc] text-slate-800 font-sans antialiased min-h-screen flex flex-col selection:bg-salira-100 selection:text-salira-700">
+            <div className="flex flex-1 min-h-screen w-full">
             {/* OVERLAY (mobile only) */}
             <div
                 onClick={() => setSidebarOpen(false)}
@@ -511,19 +512,21 @@ export default function Authenticated({
             />
 
             {/* SIDEBAR */}
-            <aside className={`fixed inset-y-0 left-0 z-50 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-700/60 transition-all duration-300 transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} ${sidebarCollapsed ? 'lg:w-20' : 'lg:w-64'} flex flex-col shadow-2xl lg:shadow-none`}>
+            <aside className={`fixed lg:sticky top-0 h-screen z-50 lg:z-30 bg-white border-r border-slate-200/80 transition-all duration-300 transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} ${sidebarCollapsed ? 'w-20' : 'w-64'} flex flex-col shrink-0 select-none shadow-[2px_0_12px_-4px_rgba(0,0,0,0.03)]`}>
                 {/* Logo Area */}
-                <div className="h-16 flex items-center justify-between px-6 border-b border-slate-100 dark:border-slate-700/60 flex-shrink-0 overflow-hidden">
+                <div className="h-20 flex items-center justify-between px-5 border-b border-slate-100 flex-shrink-0 overflow-hidden">
                     <Link href={route('dashboard')} className="flex items-center gap-3" onClick={() => setSidebarOpen(false)}>
                         {school?.logo ? (
-                            <img src={school.logo} alt="Logo Sekolah" className="h-8 w-8 flex-shrink-0 object-contain rounded" />
+                            <img src={school.logo} alt="Logo Sekolah" className="h-9 w-auto object-contain flex-shrink-0" />
                         ) : (
-                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-8 w-8 flex-shrink-0" />
+                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-9 w-auto object-contain flex-shrink-0" />
                         )}
                         {!sidebarCollapsed && (
-                            <span className="text-xl font-black tracking-tighter text-indigo-600 dark:text-indigo-400 whitespace-nowrap truncate max-w-[140px]" title={school?.name}>
-                                {school?.name || 'SALIRA'}
-                            </span>
+                            <div className="flex flex-col min-w-0">
+                                <span className="text-xl font-extrabold tracking-tight text-salira-700 leading-none truncate max-w-[140px]" title={school?.name}>
+                                    {school?.name || 'SALIRA'}
+                                </span>
+                            </div>
                         )}
                     </Link>
                     <button
@@ -535,37 +538,38 @@ export default function Authenticated({
                 </div>
 
                 {/* Nav Links */}
-                <nav className="flex-1 overflow-y-auto py-3 custom-scrollbar">
+                <nav className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6 text-[12px] font-semibold text-slate-500 custom-scrollbar-x">
                     {navGroups.map((group) => {
                         const visibleItems = group.items.filter(i => i.show);
                         if (!group.show || visibleItems.length === 0) return null;
                         return (
-                            <div key={group.group} className="mb-1">
+                            <div key={group.group}>
                                 {!sidebarCollapsed ? (
-                                    <p className="px-4 pt-4 pb-1.5 text-[9px] font-black text-slate-400 dark:text-slate-600 uppercase tracking-[0.15em] truncate">
+                                    <span className="px-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">
                                         {group.group}
-                                    </p>
+                                    </span>
                                 ) : (
                                     <div className="h-4" />
                                 )}
-                                <div className="px-2 space-y-0.5">
+                                <div className="mt-2 space-y-0.5">
                                     {visibleItems.map((item) => (
                                         <Link
                                             key={item.label}
                                             href={item.href}
                                             onClick={() => setSidebarOpen(false)}
-                                            className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150 ${
+                                            className={`flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-150 ${
                                                 item.active
-                                                    ? 'bg-indigo-50 dark:bg-indigo-500/10 text-indigo-600 dark:text-indigo-400'
-                                                    : 'text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700/50'
+                                                    ? 'bg-salira-50 text-salira-700 font-bold shadow-sm'
+                                                    : 'text-slate-600 hover:text-salira-700 hover:bg-slate-50'
                                             }`}
                                         >
-                                            <span className={`flex-shrink-0 ${item.active ? 'text-indigo-500 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                                            <span className={`flex items-center gap-2.5 flex-shrink-0 ${item.active ? 'text-salira-600' : 'text-slate-400'}`}>
                                                 {item.icon}
+                                                {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                                             </span>
-                                            {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                                            
                                             {!sidebarCollapsed && item.active && (
-                                                <span className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-500 flex-shrink-0" />
+                                                <span className="h-1.5 w-1.5 rounded-full bg-salira-600 flex-shrink-0" />
                                             )}
                                         </Link>
                                     ))}
@@ -605,43 +609,38 @@ export default function Authenticated({
             `}</style>
 
             {/* MAIN CONTENT */}
-            <div className={`flex flex-col min-h-screen transition-all duration-300 ${sidebarCollapsed ? 'lg:pl-20' : 'lg:pl-64'}`}>
+            <div className="flex-1 flex flex-col min-w-0">
                 {/* TOP HEADER */}
-                <header className="sticky top-0 z-30 h-16 flex items-center gap-3 px-4 sm:px-6 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-700/60">
-                    <button
-                        onClick={() => setSidebarOpen(true)}
-                        className="lg:hidden p-2 -ml-1 rounded-lg text-slate-500 hover:bg-slate-100 transition-colors"
-                    >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-                    </button>
+                <header className="h-20 bg-white border-b border-slate-200/80 px-4 lg:px-8 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+                    {/* Left: Title & Subtitle (Header Slot) */}
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => setSidebarOpen(true)}
+                            className="lg:hidden p-2 -ml-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                        </button>
 
-                    {/* Sidebar Toggle — desktop only */}
-                    <button
-                        onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-                        className="hidden lg:flex p-2 rounded-xl text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 dark:text-slate-400 transition-all hover:scale-110 active:scale-95"
-                        title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-                    >
-                        {sidebarCollapsed ? (
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
-                        ) : (
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
-                        )}
-                    </button>
+                        <button
+                            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+                            className="hidden lg:flex p-2 -ml-2 rounded-xl text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition-all hover:scale-110 active:scale-95"
+                            title={sidebarCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+                        >
+                            {sidebarCollapsed ? (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 5l7 7-7 7M5 5l7 7-7 7" /></svg>
+                            ) : (
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
+                            )}
+                        </button>
 
-                    <div className="lg:hidden flex items-center gap-2">
-                        {school?.logo ? (
-                            <img src={school.logo} alt="Logo Sekolah" className="h-7 w-auto object-contain rounded" />
-                        ) : (
-                            <img src="/images/logo-salira.png" alt="SALIRA Logo" className="h-7 w-auto" />
+                        {header && (
+                            <div className="flex flex-col text-left">
+                                <h1 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
+                                    {header}
+                                </h1>
+                            </div>
                         )}
-                        <span className="text-lg font-bold text-indigo-600 dark:text-indigo-400 truncate max-w-[120px]">{school?.name || 'SALIRA'}</span>
                     </div>
-
-                    {header && (
-                        <div className="hidden lg:block flex-1 text-slate-700 dark:text-slate-200 font-semibold">
-                            {header}
-                        </div>
-                    )}
 
                     <div className="flex-1 lg:flex-none" />
 
@@ -830,6 +829,7 @@ export default function Authenticated({
                         </div>
                     </div>
                 )}
+            </div>
             </div>
             <style>{`
                 @keyframes bounce-in {

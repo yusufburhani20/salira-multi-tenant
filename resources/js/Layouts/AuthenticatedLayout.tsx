@@ -538,14 +538,14 @@ export default function Authenticated({
                 </div>
 
                 {/* Nav Links */}
-                <nav className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6 text-sm font-semibold text-slate-500 custom-scrollbar-x">
+                <nav className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6 text-sm font-semibold text-[#778398] custom-scrollbar-x">
                     {navGroups.map((group) => {
                         const visibleItems = group.items.filter(i => i.show);
                         if (!group.show || visibleItems.length === 0) return null;
                         return (
                             <div key={group.group}>
                                 {!sidebarCollapsed ? (
-                                    <span className="px-3 text-xs uppercase font-bold tracking-wider text-slate-400">
+                                    <span className="px-3 text-xs uppercase font-bold tracking-wider text-[#778398]">
                                         {group.group}
                                     </span>
                                 ) : (
@@ -560,10 +560,10 @@ export default function Authenticated({
                                             className={`flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-150 ${
                                                 item.active
                                                     ? 'bg-salira-50 text-salira-700 font-bold shadow-sm'
-                                                    : 'text-slate-600 hover:text-salira-700 hover:bg-slate-50'
+                                                    : 'text-[#778398] hover:text-salira-700 hover:bg-slate-50'
                                             }`}
                                         >
-                                            <span className={`flex items-center gap-2.5 flex-shrink-0 ${item.active ? 'text-salira-600' : 'text-slate-400'}`}>
+                                            <span className={`flex items-center gap-2.5 flex-shrink-0 ${item.active ? 'text-salira-600' : 'text-[#778398]'}`}>
                                                 {item.icon}
                                                 {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                                             </span>

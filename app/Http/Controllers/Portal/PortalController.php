@@ -417,11 +417,11 @@ class PortalController extends Controller
     {
         $student = Auth::guard('student')->user();
         
-        $scores = StudentScore::with(['dailyAssessment'])
+        $scores = StudentScore::with(['assessment'])
             ->where('student_id', $student->id)
             ->get()
             ->groupBy(function($s) {
-                return $s->dailyAssessment->subject;
+                return $s->assessment->subject;
             });
 
         return Inertia::render('Portal/Scores', [

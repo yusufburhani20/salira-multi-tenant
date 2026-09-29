@@ -34,10 +34,10 @@ export default function Scores({ scores }: { scores: any }) {
                                         <div className="flex-1">
                                             <div className="flex items-center gap-3 mb-2">
                                                 <span className="px-2.5 py-1 bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 text-[10px] font-black rounded-lg uppercase tracking-tight">
-                                                    {new Date(s.daily_assessment.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}
+                                                    {new Date(s.assessment.date).toLocaleDateString('id-ID', {day: 'numeric', month: 'long', year: 'numeric'})}
                                                 </span>
                                             </div>
-                                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200">{s.daily_assessment.title}</h4>
+                                            <h4 className="text-lg font-bold text-slate-800 dark:text-slate-200">{s.assessment.title}</h4>
                                             {s.notes && (
                                                 <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-4 rounded-2xl italic border-l-4 border-slate-200 dark:border-slate-700">
                                                     "{s.notes}"

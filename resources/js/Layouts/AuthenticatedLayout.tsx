@@ -611,14 +611,14 @@ export default function Authenticated({
             {/* MAIN CONTENT */}
             <div className="flex-1 flex flex-col min-w-0">
                 {/* TOP HEADER */}
-                <header className="h-20 bg-white border-b border-slate-200/80 px-4 lg:px-8 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+                <header className="h-16 lg:h-20 bg-primary-container lg:bg-white border-b-0 lg:border-b lg:border-slate-200/80 px-4 lg:px-8 flex items-center justify-between sticky top-0 z-20 shadow-[0_1px_8px_rgba(0,0,0,0.06)] lg:shadow-sm text-on-primary lg:text-slate-900">
                     {/* Left: Title & Subtitle (Header Slot) */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-2 lg:gap-4 w-full lg:w-auto">
                         <button
                             onClick={() => setSidebarOpen(true)}
-                            className="lg:hidden p-2 -ml-2 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition"
+                            className="lg:hidden p-2 -ml-2 rounded-lg text-on-primary hover:bg-surface-container-lowest/15 active:bg-surface-container-lowest/25 transition"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                            <span className="material-symbols-outlined text-[24px]">menu</span>
                         </button>
 
                         <button
@@ -633,18 +633,32 @@ export default function Authenticated({
                             )}
                         </button>
 
+                        {/* Mobile Logo & Title */}
+                        <div className="flex lg:hidden items-center gap-2">
+                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgrfZ1m2eGFqXYZ5BJEEVdy3wJISGXiHE6k3_LE1UtvYBcIHEYOfK4pT1XGoPGCSW7L6sUbRipiXpZFd8zUdXan4Cw3GeQ8qwly9JioluBo9knpM_qWaW0e-Uv9O-o4GmoW7-VK7Azu_mfsjsehWHebO-QAyrUbeiweEMVSpfK_mVgnfhc2pryT0tz_ZCXdhqsZQqMBP2qekqQv8V2hccoMl8VgPheSYitS9TAGeBSfoK6EK475TxlAKO5ZwmCUhlg2yw" alt="SALIRA Logo" className="w-8 h-8 object-contain" />
+                            <span className="font-headline-sm text-[19px] font-bold text-on-primary tracking-wider">SALIRA</span>
+                        </div>
+
                         {header && (
-                            <div className="flex flex-col text-left">
+                            <div className="flex flex-col text-left hidden lg:flex">
                                 <h1 className="text-xl font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
                                     {header}
                                 </h1>
                             </div>
                         )}
+                        
+                        <div className="flex-1 lg:hidden" />
+                        
+                        {/* Mobile 'Beranda' Pill */}
+                        <div className="lg:hidden flex items-center px-2 py-0.5 rounded-full bg-surface-container-lowest/15 backdrop-blur-md">
+                            <span className="w-1.5 h-1.5 rounded-full bg-tertiary-fixed mr-1.5 animate-pulse"></span>
+                            <span className="font-label-sm text-label-sm text-on-primary truncate max-w-[100px]">{route().current('dashboard') ? 'Beranda' : 'Akademik'}</span>
+                        </div>
                     </div>
 
-                    <div className="flex-1 lg:flex-none" />
+                    <div className="hidden lg:block flex-1" />
 
-                    <div className="flex items-center gap-2">
+                    <div className="hidden lg:flex items-center gap-2">
                         {!subscriptionLoading && (
                             <button
                                 onClick={isSubscribed ? unsubscribe : subscribe}

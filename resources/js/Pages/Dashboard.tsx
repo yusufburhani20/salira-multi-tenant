@@ -72,7 +72,6 @@ export default function Dashboard({
         router.get(route('dashboard'), { academic_class_id: id, start_date: start, end_date: end }, { 
             preserveState: true,
             preserveScroll: true,
-            only: ['stats', 'chartData', 'attendanceRanking', 'assessmentRanking', 'filters']
         });
     };
 

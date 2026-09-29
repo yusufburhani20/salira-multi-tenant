@@ -61,6 +61,25 @@ class ApprovalController extends Controller
                         ]
                     );
                 }
+            } 
+            // Jika ini IZIN PEGAWAI (user) dan DISETUJUI, buat record absensi otomatis
+            elseif ($approval->user_id && $request->status === 'approved') {
+                $start = \Carbon\Carbon::parse($approval->start_date);
+                $end   = \Carbon\Carbon::parse($approval->end_date);
+
+                for ($date = $start; $date->lte($end); $date->addDay()) {
+                    \App\Models\Attendance::updateOrCreate(
+                        [
+                            'user_id' => $approval->user_id,
+                            'date'    => $date->toDateString(),
+                        ],
+                        [
+                            'status'              => $approval->type === 'sakit' ? \App\Enums\AttendanceStatus::sakit : \App\Enums\AttendanceStatus::izin,
+                            'verification_status' => \App\Enums\VerificationStatus::valid,
+                            'notes'               => 'Izin disetujui: ' . $approval->reason,
+                        ]
+                    );
+                }
             }
         });
 

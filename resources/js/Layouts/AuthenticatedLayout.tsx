@@ -844,6 +844,31 @@ export default function Authenticated({
                     </div>
                 )}
             </div>
+            {/* Mobile Bottom Navigation Bar */}
+            <nav className="lg:hidden fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-2px_12px_rgba(0,0,0,0.05)]">
+                <div className="flex justify-around items-center h-16 px-space-xs">
+                    <Link href={route('dashboard')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('dashboard') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">dashboard</span>
+                        <span className="font-label-sm text-label-sm mt-0.5">Beranda</span>
+                    </Link>
+                    <Link href={route('admin.reports.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('admin.reports.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">menu_book</span>
+                        <span className="font-label-sm text-label-sm mt-0.5">Akademik</span>
+                    </Link>
+                    <Link href={route('portal.attendance.scanner')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('portal.attendance.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">how_to_reg</span>
+                        <span className="font-label-sm text-label-sm mt-0.5">Kehadiran</span>
+                    </Link>
+                    <Link href={route('admin.inventory.items.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('admin.inventory.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">inventory_2</span>
+                        <span className="font-label-sm text-label-sm mt-0.5">Sarpras</span>
+                    </Link>
+                    <Link href={route('profile.edit')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('profile.edit') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">account_circle</span>
+                        <span className="font-label-sm text-label-sm mt-0.5">Profil</span>
+                    </Link>
+                </div>
+            </nav>
             </div>
             <style>{`
                 @keyframes bounce-in {

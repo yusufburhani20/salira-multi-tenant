@@ -40,42 +40,43 @@ class DashboardController extends Controller
                 'school',
             ])->get();
 
-            $studentsPerClassCacheKey = 'dashboard_studentsPerClass_v2_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_' . ($classId ?: 'all');
-            $studentsPerClass = Cache::remember($studentsPerClassCacheKey, 300, function () use ($allClasses, $today) {
-                // Get today's attendance grouped by class and student
-                $todayAttendancesByClass = \App\Models\StudentAttendance::whereDate('date', $today)
-                    ->get()
-                    ->groupBy('academic_class_id');
+            \Illuminate\Support\Facades\Log::info('Dashboard allClasses count: ' . $allClasses->count());
 
-                return $allClasses->map(function ($class) use ($todayAttendancesByClass) {
-                    $totalStudents = $class->students->count();
-                    $todayEntries = $todayAttendancesByClass->get($class->id, collect());
-                    $byStudent = $todayEntries->groupBy('student_id');
+            // Calculate today's attendance grouped by class and student
+            $todayAttendancesByClass = \App\Models\StudentAttendance::whereDate('date', $today)
+                ->get()
+                ->groupBy('academic_class_id');
 
-                    $hadir = 0; $izin = 0; $alpha = 0;
-                    foreach ($byStudent as $studentId => $entries) {
-                        $status = \App\Models\StudentAttendance::getDailyStatusFromAttendances($entries);
-                        if ($status === 'hadir' || $status === 'terlambat') $hadir++;
-                        elseif ($status === 'izin' || $status === 'sakit') $izin++;
-                        elseif ($status === 'alpha') $alpha++;
-                    }
+            $studentsPerClass = $allClasses->map(function ($class) use ($todayAttendancesByClass) {
+                $totalStudents = $class->students->count();
+                $todayEntries = $todayAttendancesByClass->get($class->id, collect());
+                $byStudent = $todayEntries->groupBy('student_id');
 
-                    return [
-                        'id'             => $class->id,
-                        'name'           => $class->name,
-                        'school_name'    => $class->school ? $class->school->name : null,
-                        'student_count'  => $totalStudents,
-                        'hadir'          => $hadir,
-                        'izin'           => $izin,
-                        'alpha'          => $alpha,
-                        'belum_absen'    => max(0, $totalStudents - $hadir - $izin - $alpha),
-                    ];
-                })->sortBy(fn($c) => $c['school_name'] . ' ' . $c['name'])->values();
-            });
+                $hadir = 0; $izin = 0; $alpha = 0;
+                foreach ($byStudent as $studentId => $entries) {
+                    $status = \App\Models\StudentAttendance::getDailyStatusFromAttendances($entries);
+                    if ($status === 'hadir' || $status === 'terlambat') $hadir++;
+                    elseif ($status === 'izin' || $status === 'sakit') $izin++;
+                    elseif ($status === 'alpha') $alpha++;
+                }
+
+                return [
+                    'id'             => $class->id,
+                    'name'           => $class->name,
+                    'school_name'    => $class->school ? $class->school->name : null,
+                    'student_count'  => $totalStudents,
+                    'hadir'          => $hadir,
+                    'izin'           => $izin,
+                    'alpha'          => $alpha,
+                    'belum_absen'    => max(0, $totalStudents - $hadir - $izin - $alpha),
+                ];
+            })->sortBy(fn($c) => $c['school_name'] . ' ' . $c['name'])->values();
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard studentsPerClass failed: ' . $e->getMessage());
             $studentsPerClass = collect();
         }
+
+        \Illuminate\Support\Facades\Log::info('Dashboard studentsPerClass count: ' . $studentsPerClass->count());
         
         // 1. Basic Stats (Filtered by Class if selected)
         $studentsQuery = StudentAttendance::whereDate('date', $today);

@@ -407,20 +407,20 @@ export default function Dashboard({
                         
                         <div className="mt-6">
                             <div className="w-full overflow-x-auto custom-scrollbar pb-2">
-                                <div className="mx-auto" style={{ maxWidth: Math.max(500, (chartData?.length || 0) * 85) + 'px' }}>
-                                    <div className="relative h-56 w-full flex flex-col justify-between text-[11px] text-slate-400" style={{ minWidth: Math.max(480, (chartData?.length || 0) * 70) + 'px' }}>
-                                        {/* Y-axis labels + grid lines */}
-                                        {[100, 75, 50, 25].map(v => (
-                                            <div key={v} className="border-b border-dashed border-slate-200/80 w-full flex items-center justify-between">
-                                                <span className="-translate-y-2.5">{v}</span>
-                                            </div>
-                                        ))}
-                                        <div className="border-b border-slate-200 w-full flex items-center justify-between">
-                                            <span className="-translate-y-2.5">0</span>
+                                <div className="relative h-56 w-full flex flex-col justify-between text-[11px] text-slate-400" style={{ minWidth: Math.max(480, (chartData?.length || 0) * 80) + 'px' }}>
+                                    {/* Y-axis labels + grid lines */}
+                                    {[100, 75, 50, 25].map(v => (
+                                        <div key={v} className="border-b border-dashed border-slate-200/80 w-full flex items-center justify-between">
+                                            <span className="-translate-y-2.5">{v}</span>
                                         </div>
+                                    ))}
+                                    <div className="border-b border-slate-200 w-full flex items-center justify-between">
+                                        <span className="-translate-y-2.5">0</span>
+                                    </div>
 
-                                        {/* Chart bars area — positioned above labels */}
-                                        <div className="absolute inset-x-8 bottom-0 top-3 flex items-end justify-between gap-3">
+                                    {/* Chart bars area — positioned above labels */}
+                                    <div className="absolute inset-x-8 bottom-0 top-3">
+                                        <div className="mx-auto h-full flex items-end justify-between gap-3" style={{ maxWidth: Math.max(300, (chartData?.length || 0) * 85) + 'px' }}>
                                             {chartData?.map((item: any, i: number) => (
                                                 <div key={i} className="flex-1 flex flex-col items-center gap-2 h-full justify-end group">
                                                     {item.height > 0 ? (
@@ -439,9 +439,11 @@ export default function Dashboard({
                                             ))}
                                         </div>
                                     </div>
-                                    
-                                    {/* X-Axis Labels & Stats */}
-                                    <div className="grid gap-3 text-center pt-3 pl-8 pb-1" style={{ gridTemplateColumns: `repeat(${chartData?.length || 1}, minmax(0, 1fr))`, minWidth: Math.max(480, (chartData?.length || 0) * 70) + 'px' }}>
+                                </div>
+                                
+                                {/* X-Axis Labels & Stats */}
+                                <div className="pl-8 pr-8 w-full" style={{ minWidth: Math.max(480, (chartData?.length || 0) * 80) + 'px' }}>
+                                    <div className="grid gap-3 text-center pt-3 pb-1 mx-auto" style={{ gridTemplateColumns: `repeat(${chartData?.length || 1}, minmax(0, 1fr))`, maxWidth: Math.max(300, (chartData?.length || 0) * 85) + 'px' }}>
                                         {chartData?.map((item: any, i: number) => (
                                             <div key={i}>
                                                 <div className="text-xs font-bold text-slate-800">{item.date}</div>

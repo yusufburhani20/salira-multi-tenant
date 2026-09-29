@@ -438,17 +438,19 @@ export default function ReportIndex({ auth, classes, subjects, semesters = [], a
                                             ))}
                                         </select>
                                     </div>
-                                    <div>
-                                        <select
-                                            onChange={e => handleMonthChange(e.target.value)}
-                                            className="w-full h-12 rounded-xl border-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:ring-primary focus:border-primary transition-all font-bold text-sm"
-                                        >
-                                            <option value="">-- Berdasarkan Bulan --</option>
-                                            {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map((m, i) => (
-                                                <option key={i} value={i + 1}>{m}</option>
-                                            ))}
-                                        </select>
-                                    </div>
+                                    {activeTab !== 'attendance_daily' && (
+                                        <div>
+                                            <select
+                                                onChange={e => handleMonthChange(e.target.value)}
+                                                className="w-full h-12 rounded-xl border-gray-100 dark:border-gray-700 dark:bg-gray-900 dark:text-white focus:ring-primary focus:border-primary transition-all font-bold text-sm"
+                                            >
+                                                <option value="">-- Berdasarkan Bulan --</option>
+                                                {['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'].map((m, i) => (
+                                                    <option key={i} value={i + 1}>{m}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+                                    )}
                                     <div className="lg:col-span-2 flex items-center gap-2 h-12 bg-gray-50 dark:bg-gray-900/50 p-1 rounded-xl border border-gray-100 dark:border-gray-700">
                                         <input
                                             type="date"
@@ -456,13 +458,17 @@ export default function ReportIndex({ auth, classes, subjects, semesters = [], a
                                             onChange={e => setData(d => ({ ...d, start_date: e.target.value }))}
                                             className="flex-1 h-full bg-transparent border-none text-[11px] focus:ring-0 dark:text-white"
                                         />
-                                        <span className="text-gray-300 text-[10px] font-bold">SAMPAI</span>
-                                        <input
-                                            type="date"
-                                            value={data.end_date}
-                                            onChange={e => setData(d => ({ ...d, end_date: e.target.value }))}
-                                            className="flex-1 h-full bg-transparent border-none text-[11px] focus:ring-0 dark:text-white"
-                                        />
+                                        {activeTab !== 'attendance_daily' && (
+                                            <>
+                                                <span className="text-gray-300 text-[10px] font-bold">SAMPAI</span>
+                                                <input
+                                                    type="date"
+                                                    value={data.end_date}
+                                                    onChange={e => setData(d => ({ ...d, end_date: e.target.value }))}
+                                                    className="flex-1 h-full bg-transparent border-none text-[11px] focus:ring-0 dark:text-white"
+                                                />
+                                            </>
+                                        )}
                                     </div>
 
                                     <div className="flex gap-2">

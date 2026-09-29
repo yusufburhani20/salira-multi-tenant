@@ -538,7 +538,7 @@ export default function Authenticated({
                 </div>
 
                 {/* Nav Links */}
-                <nav className="flex-1 overflow-y-auto px-3.5 py-4 space-y-6 text-sm font-semibold text-[#778398] custom-scrollbar-x">
+                <nav className="flex-1 overflow-y-auto overflow-x-hidden px-3.5 py-4 space-y-6 text-[13px] font-semibold text-[#778398]">
                     {navGroups.map((group) => {
                         const visibleItems = group.items.filter(i => i.show);
                         if (!group.show || visibleItems.length === 0) return null;
@@ -563,7 +563,7 @@ export default function Authenticated({
                                                     : 'text-[#778398] hover:text-salira-700 hover:bg-slate-50'
                                             }`}
                                         >
-                                            <span className={`flex items-center gap-2.5 flex-shrink-0 ${item.active ? 'text-salira-600' : 'text-[#778398]'}`}>
+                                            <span className={`flex items-center gap-2.5 min-w-0 ${item.active ? 'text-salira-600' : 'text-[#778398]'}`}>
                                                 {item.icon}
                                                 {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                                             </span>

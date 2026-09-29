@@ -259,9 +259,19 @@ Route::middleware('auth')->group(function () {
             ->first();
         $geofences = \App\Models\Geofence::where('is_active', true)->get();
         
+        $permissions = $request->user()->permissionRequests()->with('addressedTo')->latest()->get();
+        $types = [];
+        foreach(\App\Enums\PermissionType::cases() as $case) {
+            $types[] = ['value' => $case->value, 'label' => $case->label()];
+        }
+        $approvers = \App\Models\User::role('Kepala Sekolah')->get(['id', 'name']);
+        
         return Inertia::render('User/Attendances/Scanner', [
             'todayAttendance' => $todayAttendance,
-            'geofences' => $geofences
+            'geofences' => $geofences,
+            'permissions' => $permissions,
+            'types' => $types,
+            'approvers' => $approvers,
         ]);
     })->name('attendances.scanner');
     

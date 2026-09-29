@@ -1,1 +1,0 @@
-function e(e){return`${e.getFullYear()}-${String(e.getMonth()+1).padStart(2,`0`)}-${String(e.getDate()).padStart(2,`0`)}`}var t=()=>e(new Date),n=(t,n)=>e(new Date(t,n,1)),r=(t,n)=>e(new Date(t,n+1,0));export{r as n,t as r,n as t};

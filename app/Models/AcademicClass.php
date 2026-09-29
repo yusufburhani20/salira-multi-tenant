@@ -24,13 +24,24 @@ class AcademicClass extends Model
                 }
             }
 
-            // Find active academic year ID
-            $activeYearId = \Illuminate\Support\Facades\Cache::remember('active_academic_year_id', 3600, function () {
-                return \Illuminate\Support\Facades\DB::table('academic_years')->where('is_active', true)->value('id');
+            $user = null;
+            if (auth()->guard('web')->hasUser()) $user = auth()->guard('web')->user();
+            elseif (auth()->guard('student')->hasUser()) $user = auth()->guard('student')->user();
+            elseif (auth()->guard('sanctum')->hasUser()) $user = auth()->guard('sanctum')->user();
+
+            $schoolId = $user ? $user->school_id : null;
+            $cacheKey = 'active_academic_year_id_' . ($schoolId ?? 'all');
+
+            $activeYearIds = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($schoolId) {
+                $query = \Illuminate\Support\Facades\DB::table('academic_years')->where('is_active', true);
+                if ($schoolId) {
+                    $query->where('school_id', $schoolId);
+                }
+                return $query->pluck('id')->toArray();
             });
 
-            if ($activeYearId) {
-                $builder->where($builder->getModel()->getTable() . '.academic_year_id', $activeYearId);
+            if (!empty($activeYearIds)) {
+                $builder->whereIn($builder->getModel()->getTable() . '.academic_year_id', $activeYearIds);
             }
         });
     }

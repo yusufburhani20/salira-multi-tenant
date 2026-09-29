@@ -40,7 +40,7 @@ class DashboardController extends Controller
                 'school',
             ])->get();
 
-            $studentsPerClassCacheKey = 'dashboard_studentsPerClass_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_' . ($classId ?: 'all');
+            $studentsPerClassCacheKey = 'dashboard_studentsPerClass_v2_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_' . ($classId ?: 'all');
             $studentsPerClass = Cache::remember($studentsPerClassCacheKey, 300, function () use ($allClasses, $today) {
                 // Get today's attendance grouped by class and student
                 $todayAttendancesByClass = \App\Models\StudentAttendance::whereDate('date', $today)

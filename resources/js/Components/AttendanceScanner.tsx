@@ -139,9 +139,6 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
         }
     };
 
-    // Fetch / Sharpen Geolocation coordinates — Two-phase strategy:
-    // Phase 1: Network/Low-Accuracy (fast, works indoors via WiFi/Cell Tower)
-    // Phase 2: Upgrade to High-Accuracy GPS in background if accuracy improves
     const getCurrentLocation = useCallback(() => {
         if (!navigator.geolocation) {
             setLocationError('Browser ini tidak mendukung Geolocation.');
@@ -151,34 +148,17 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
         setIsRefreshingLocation(true);
         setLocationError(null);
 
-        // --- Phase 1: Network / Low-Accuracy (fast response, indoor-friendly) ---
+        // Always request high accuracy (GPS) for attendance tracking
         navigator.geolocation.getCurrentPosition(
-            (networkPosition) => {
-                // Apply network fix immediately so user sees a location fast
-                applyPosition(networkPosition);
+            (position) => {
+                applyPosition(position);
                 setIsRefreshingLocation(false);
-
-                // --- Phase 2: Try to upgrade to GPS high-accuracy in background ---
-                navigator.geolocation.getCurrentPosition(
-                    (gpsPosition) => {
-                        // Only replace if GPS gives better accuracy
-                        if (gpsPosition.coords.accuracy < networkPosition.coords.accuracy) {
-                            applyPosition(gpsPosition);
-                        }
-                    },
-                    () => {
-                        // Phase 2 failed silently — we already have a phase-1 fix, so it's fine
-                    },
-                    { enableHighAccuracy: true, timeout: 30000, maximumAge: 0 }
-                );
             },
             (error) => {
-                // Phase 1 also failed — show descriptive error
                 setLocationError(formatLocationError(error));
                 setIsRefreshingLocation(false);
             },
-            // Phase 1 options: allow 60s cache, low accuracy = fast & works indoors
-            { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 }
+            { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
         );
     }, [geofences, applyPosition]);
 

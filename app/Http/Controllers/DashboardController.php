@@ -392,7 +392,7 @@ class DashboardController extends Controller
 
     public function classDailyGrid(Request $request, $classId)
     {
-        $today = Carbon::today();
+        $today = $request->query('date') ? Carbon::parse($request->query('date')) : Carbon::today();
         
         $class = \App\Models\AcademicClass::with(['students' => function($q) {
             $q->wherePivot('is_active', true)->orderBy('name');

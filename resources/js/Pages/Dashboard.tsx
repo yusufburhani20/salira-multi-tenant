@@ -39,12 +39,15 @@ export default function Dashboard({
     const [selectedGridClassId, setSelectedGridClassId] = useState<number | null>(null);
     const [gridData, setGridData] = useState<any>(null);
     const [gridLoading, setGridLoading] = useState(false);
+    const [gridDate, setGridDate] = useState<string>('');
 
-    const openClassGrid = async (id: number) => {
+    const openClassGrid = async (id: number, dateStr: string = '') => {
         setSelectedGridClassId(id);
+        setGridDate(dateStr);
         setGridLoading(true);
         try {
-            const response = await fetch(`/dashboard/class/${id}/grid`);
+            const url = dateStr ? `/dashboard/class/${id}/grid?date=${dateStr}` : `/dashboard/class/${id}/grid`;
+            const response = await fetch(url);
             const data = await response.json();
             setGridData(data);
         } catch (error) {
@@ -612,11 +615,22 @@ export default function Dashboard({
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
                     <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up">
                         <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
-                            <div>
-                                <h3 className="text-xl font-black text-slate-800 dark:text-slate-100">
-                                    Rekap Harian: {gridData?.class_name || 'Memuat...'}
-                                </h3>
-                                <p className="text-sm font-semibold text-slate-500 mt-1">{gridData?.date || 'Memuat...'}</p>
+                            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+                                <div>
+                                    <h3 className="text-xl font-black text-slate-800 dark:text-slate-100">
+                                        Rekap Harian: {gridData?.class_name || 'Memuat...'}
+                                    </h3>
+                                    <p className="text-sm font-semibold text-slate-500 mt-1">{gridData?.date || 'Memuat...'}</p>
+                                </div>
+                                <div className="flex items-center gap-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-1.5 rounded-lg shadow-sm">
+                                    <span className="text-xs font-bold text-slate-500">Tanggal:</span>
+                                    <input 
+                                        type="date" 
+                                        value={gridDate || new Date().toISOString().split('T')[0]} 
+                                        onChange={(e) => openClassGrid(selectedGridClassId!, e.target.value)}
+                                        className="text-xs font-semibold border-none bg-transparent focus:ring-0 p-0 text-slate-700 dark:text-slate-300"
+                                    />
+                                </div>
                             </div>
                             <button 
                                 onClick={() => setSelectedGridClassId(null)}

@@ -121,11 +121,22 @@ class DashboardController extends Controller
             ];
         }
 
-        // Resolve active semester
+        // Resolve active semester filtered by school
         $activeSemester = \App\Models\Semester::where('is_active', true)
-            ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
+            ->whereHas('academicYear', function ($q) use ($schoolId) {
+                $q->where('is_active', true);
+                if ($schoolId) {
+                    $q->withoutGlobalScope('school')->where('school_id', $schoolId);
+                }
+            })
             ->first()
-            ?? \App\Models\Semester::where('is_active', true)->first();
+            ?? \App\Models\Semester::where('is_active', true)
+                ->whereHas('academicYear', function ($q) use ($schoolId) {
+                    if ($schoolId) {
+                        $q->withoutGlobalScope('school')->where('school_id', $schoolId);
+                    }
+                })
+                ->first();
 
         // 2. Attendance Chart (Custom Range or Last 7 Days of active semester)
         $totalStudents = $classId 
@@ -220,13 +231,16 @@ class DashboardController extends Controller
         // 3. Leaderboards / Rankings
         // a. Attendance Ranking (Top 5)
         try {
-            $attRankingCacheKey = 'dashboard_att_ranking_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
+            $attRankingCacheKey = 'dashboard_att_ranking_v2_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
             $attendanceRanking = Cache::remember($attRankingCacheKey, 1800, function () use ($classId, $activeSemester, $schoolId) {
                 $subquery = \Illuminate\Support\Facades\DB::table('student_attendances')
                     ->join('students', 'student_attendances.student_id', '=', 'students.id')
                     ->select('student_attendances.student_id', 'student_attendances.date')
                     ->when($classId, fn($q) => $q->where('student_attendances.academic_class_id', $classId))
-                    ->when($activeSemester, fn($q) => $q->whereBetween('student_attendances.date', [$activeSemester->start_date, $activeSemester->end_date]))
+                    ->when($activeSemester, fn($q) => $q->whereBetween('student_attendances.date', [
+                        $activeSemester->start_date instanceof \Carbon\Carbon ? $activeSemester->start_date->format('Y-m-d') : $activeSemester->start_date,
+                        $activeSemester->end_date instanceof \Carbon\Carbon ? $activeSemester->end_date->format('Y-m-d') : $activeSemester->end_date
+                    ]))
                     ->when($schoolId, fn($q) => $q->where('students.school_id', $schoolId))
                     ->groupBy('student_attendances.student_id', 'student_attendances.date')
                     ->havingRaw("SUM(CASE WHEN student_attendances.status IN ('hadir', 'terlambat') THEN 1 ELSE 0 END) > 0")
@@ -264,7 +278,7 @@ class DashboardController extends Controller
 
         // b. Assessment Ranking (Top 5)
         try {
-            $scoreRankingCacheKey = 'dashboard_score_ranking_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
+            $scoreRankingCacheKey = 'dashboard_score_ranking_v2_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
             $assessmentRanking = Cache::remember($scoreRankingCacheKey, 1800, function () use ($schoolId, $activeSemester, $classId) {
                 $scoreRankingQuery = \App\Models\StudentScore::query()
                     ->join('students', 'student_scores.student_id', '=', 'students.id')
@@ -276,7 +290,10 @@ class DashboardController extends Controller
                     ->with('student.academicClasses');
 
                 if ($activeSemester) {
-                    $scoreRankingQuery->whereBetween('daily_assessments.date', [$activeSemester->start_date, $activeSemester->end_date]);
+                    $scoreRankingQuery->whereBetween('daily_assessments.date', [
+                        $activeSemester->start_date instanceof \Carbon\Carbon ? $activeSemester->start_date->format('Y-m-d') : $activeSemester->start_date,
+                        $activeSemester->end_date instanceof \Carbon\Carbon ? $activeSemester->end_date->format('Y-m-d') : $activeSemester->end_date
+                    ]);
                 }
 
                 if ($classId) {

@@ -132,8 +132,11 @@ export default function MobileDashboard({ stats, studentsPerClass, chartData, ac
                                 <div key={idx} className="min-w-[150px] bg-surface-container-low p-3 rounded-xl flex flex-col justify-between flex-shrink-0">
                                     <div>
                                         <div className="flex items-center justify-between">
-                                            <span className="font-label-md text-label-md font-bold text-on-surface">{cls.kelas}</span>
-                                            {cls.belum_absen > 0 && <span className="w-2 h-2 rounded-full bg-error"></span>}
+                                            <div className="flex flex-col">
+                                                <span className="font-label-md text-label-md font-bold text-on-surface truncate pr-2 max-w-[100px]">{cls.name || cls.kelas}</span>
+                                                {cls.school_name && <span className="text-[9px] text-on-surface-variant font-medium truncate max-w-[100px]">{cls.school_name}</span>}
+                                            </div>
+                                            {cls.belum_absen > 0 && <span className="w-2 h-2 rounded-full bg-error flex-shrink-0"></span>}
                                         </div>
                                         <p className="font-headline-md text-headline-md font-bold text-primary mt-1">{cls.student_count} <span className="font-body-sm text-body-sm text-on-surface-variant font-normal">siswa</span></p>
                                     </div>

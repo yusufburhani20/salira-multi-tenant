@@ -284,10 +284,19 @@ export default function Dashboard({
                                         >
                                             {/* Header Card */}
                                             <div className="flex justify-between items-start mb-4">
-                                                <div className={`text-[11px] font-extrabold uppercase tracking-wide truncate pr-2 ${
-                                                    isActive ? 'text-white' : 'text-slate-600'
-                                                }`}>
-                                                    {cls.name}
+                                                <div className="flex-1 min-w-0 pr-2">
+                                                    <div className={`text-[11px] font-extrabold uppercase tracking-wide truncate ${
+                                                        isActive ? 'text-white' : 'text-slate-600'
+                                                    }`}>
+                                                        {cls.name}
+                                                    </div>
+                                                    {cls.school_name && (
+                                                        <div className={`text-[9px] font-semibold truncate mt-0.5 ${
+                                                            isActive ? 'text-white/80' : 'text-slate-400'
+                                                        }`}>
+                                                            {cls.school_name}
+                                                        </div>
+                                                    )}
                                                 </div>
                                                 <div className={`p-1.5 rounded-md ${
                                                     isActive ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400 group-hover:bg-salira-50 group-hover:text-salira-500 transition'

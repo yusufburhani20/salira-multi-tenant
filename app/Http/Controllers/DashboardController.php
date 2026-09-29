@@ -37,6 +37,7 @@ class DashboardController extends Controller
         try {
             $allClasses = \App\Models\AcademicClass::with([
                 'students' => fn($q) => $q->wherePivot('is_active', true)->select('students.id'),
+                'school',
             ])->get();
 
             $studentsPerClassCacheKey = 'dashboard_studentsPerClass_' . ($schoolId ?? 'all') . '_' . $today->toDateString() . '_' . ($classId ?: 'all');
@@ -62,13 +63,14 @@ class DashboardController extends Controller
                     return [
                         'id'             => $class->id,
                         'name'           => $class->name,
+                        'school_name'    => $class->school ? $class->school->name : null,
                         'student_count'  => $totalStudents,
                         'hadir'          => $hadir,
                         'izin'           => $izin,
                         'alpha'          => $alpha,
                         'belum_absen'    => max(0, $totalStudents - $hadir - $izin - $alpha),
                     ];
-                })->sortBy('name')->values();
+                })->sortBy(fn($c) => $c['school_name'] . ' ' . $c['name'])->values();
             });
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard studentsPerClass failed: ' . $e->getMessage());

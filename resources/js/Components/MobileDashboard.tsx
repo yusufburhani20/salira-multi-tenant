@@ -37,8 +37,8 @@ export default function MobileDashboard({
                 <div className="relative z-10 flex flex-col gap-space-sm">
                     {/* Status & Time Pill */}
                     <div className="flex items-center justify-between">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white dark:bg-slate-800 border dark:border-slate-700/20 backdrop-blur-md">
-                            <span className="w-2 h-2 rounded-full bg-emerald-100 dark:bg-emerald-900/50 animate-pulse"></span>
+                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white/20 dark:bg-slate-700/50 backdrop-blur-md">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
                             <span className="font-label-sm text-label-sm font-semibold tracking-wider text-white uppercase">Sistem Aktif</span>
                         </div>
                         <span className="font-label-sm text-label-sm tracking-wide font-medium text-white">
@@ -63,14 +63,14 @@ export default function MobileDashboard({
                     <div className="grid grid-cols-2 gap-space-xs mt-space-sm">
                         <Link
                             href={route('attendances.scanner')}
-                            className="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 text-salira-600 dark:text-salira-400 font-title text-title active:scale-[0.98] transition-transform"
+                            className="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-white dark:bg-slate-700 text-salira-700 dark:text-salira-300 font-title text-title active:scale-[0.98] transition-transform shadow-sm"
                         >
                             <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>qr_code_scanner</span>
                             <span className="font-headline-sm text-[13px] font-bold">Presensi Pegawai</span>
                         </Link>
                         <Link
                             href={route('admin.reports.index')}
-                            className="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700/15 backdrop-blur-md text-white font-title text-title hover:bg-white dark:bg-slate-800 border dark:border-slate-700/25 active:scale-[0.98] transition-all"
+                            className="flex items-center justify-center gap-1.5 py-3 px-3 rounded-xl bg-white/15 dark:bg-slate-700/50 backdrop-blur-md text-white font-title text-title hover:bg-white/25 dark:hover:bg-slate-700/70 active:scale-[0.98] transition-all"
                         >
                             <span className="material-symbols-outlined text-[20px]">assignment</span>
                             <span className="font-headline-sm text-[13px] font-semibold">Akses Laporan</span>
@@ -80,7 +80,7 @@ export default function MobileDashboard({
             </div>
 
             {/* ── CONTENT SHEET ── */}
-            <div className="relative -mt-6 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-t-3xl px-gutter-sm pt-space-lg pb-space-xl flex flex-col gap-space-lg">
+            <div className="relative -mt-6 bg-white dark:bg-slate-800 border-t dark:border-slate-700 rounded-t-3xl px-gutter-sm pt-space-lg pb-space-xl flex flex-col gap-space-lg">
 
                 {/* Filter & Scope Bar */}
                 <div className="flex items-center justify-between gap-space-xs">

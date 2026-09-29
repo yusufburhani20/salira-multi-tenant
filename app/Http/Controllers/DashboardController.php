@@ -232,8 +232,7 @@ class DashboardController extends Controller
         // 3. Leaderboards / Rankings
         // a. Attendance Ranking (Top 5)
         try {
-            $attRankingCacheKey = 'dashboard_att_ranking_v2_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
-            $attendanceRanking = Cache::remember($attRankingCacheKey, 1800, function () use ($classId, $activeSemester, $schoolId) {
+            $attendanceRanking = (function () use ($classId, $activeSemester, $schoolId) {
                 $subquery = \Illuminate\Support\Facades\DB::table('student_attendances')
                     ->join('students', 'student_attendances.student_id', '=', 'students.id')
                     ->select('student_attendances.student_id', 'student_attendances.date')
@@ -271,7 +270,7 @@ class DashboardController extends Controller
                         'avatar' => $student->avatar ?? null,
                     ];
                 });
-            });
+            })();
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard attendanceRanking failed: ' . $e->getMessage());
             $attendanceRanking = collect();
@@ -279,8 +278,7 @@ class DashboardController extends Controller
 
         // b. Assessment Ranking (Top 5)
         try {
-            $scoreRankingCacheKey = 'dashboard_score_ranking_v2_' . ($schoolId ?? 'all') . '_' . ($activeSemester->id ?? 'none') . '_class_' . ($classId ?: 'all');
-            $assessmentRanking = Cache::remember($scoreRankingCacheKey, 1800, function () use ($schoolId, $activeSemester, $classId) {
+            $assessmentRanking = (function () use ($schoolId, $activeSemester, $classId) {
                 $scoreRankingQuery = \App\Models\StudentScore::query()
                     ->join('students', 'student_scores.student_id', '=', 'students.id')
                     ->join('daily_assessments', 'student_scores.daily_assessment_id', '=', 'daily_assessments.id')
@@ -311,7 +309,7 @@ class DashboardController extends Controller
                         'avatar' => $student->avatar ?? null,
                     ];
                 });
-            });
+            })();
         } catch (\Throwable $e) {
             \Illuminate\Support\Facades\Log::warning('Dashboard assessmentRanking failed: ' . $e->getMessage());
             $assessmentRanking = collect();
@@ -344,15 +342,14 @@ class DashboardController extends Controller
 
         // 5. Inventory Summary — 1 query GROUP BY, bukan 5 query terpisah
         try {
-            $invCacheKey = 'inventory_stats_' . ($this->schoolId() ?? 'all');
-            $invGrouped = Cache::remember($invCacheKey, 300, function () use ($schoolId) {
+            $invGrouped = (function () use ($schoolId) {
                 return InventoryBarcode::select('inventory_barcodes.status', DB::raw('count(*) as total'))
                     ->join('inventory_items', 'inventory_barcodes.item_id', '=', 'inventory_items.id')
                     ->when($schoolId, fn($q) => $q->where('inventory_items.school_id', $schoolId))
                     ->groupBy('inventory_barcodes.status')
                     ->pluck('total', 'inventory_barcodes.status')
                     ->toArray();
-            });
+            })();
             $inventoryStats = [
                 'total'     => array_sum($invGrouped),
                 'tersedia'  => $invGrouped['tersedia'] ?? 0,

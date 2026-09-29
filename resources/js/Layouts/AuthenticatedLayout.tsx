@@ -635,8 +635,10 @@ export default function Authenticated({
 
                         {/* Mobile Logo & Title */}
                         <div className="flex lg:hidden items-center gap-2">
-                            <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgrfZ1m2eGFqXYZ5BJEEVdy3wJISGXiHE6k3_LE1UtvYBcIHEYOfK4pT1XGoPGCSW7L6sUbRipiXpZFd8zUdXan4Cw3GeQ8qwly9JioluBo9knpM_qWaW0e-Uv9O-o4GmoW7-VK7Azu_mfsjsehWHebO-QAyrUbeiweEMVSpfK_mVgnfhc2pryT0tz_ZCXdhqsZQqMBP2qekqQv8V2hccoMl8VgPheSYitS9TAGeBSfoK6EK475TxlAKO5ZwmCUhlg2yw" alt="SALIRA Logo" className="w-8 h-8 object-contain" />
-                            <span className="font-headline-sm text-[19px] font-bold text-on-primary tracking-wider">SALIRA</span>
+                            <Link href={route('dashboard')} className="flex items-center gap-2">
+                                <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgrfZ1m2eGFqXYZ5BJEEVdy3wJISGXiHE6k3_LE1UtvYBcIHEYOfK4pT1XGoPGCSW7L6sUbRipiXpZFd8zUdXan4Cw3GeQ8qwly9JioluBo9knpM_qWaW0e-Uv9O-o4GmoW7-VK7Azu_mfsjsehWHebO-QAyrUbeiweEMVSpfK_mVgnfhc2pryT0tz_ZCXdhqsZQqMBP2qekqQv8V2hccoMl8VgPheSYitS9TAGeBSfoK6EK475TxlAKO5ZwmCUhlg2yw" alt="SALIRA Logo" className="w-8 h-8 object-contain" />
+                                <span className="font-headline-sm text-[19px] font-bold text-on-primary tracking-wider">SALIRA</span>
+                            </Link>
                         </div>
 
                         {header && (
@@ -647,25 +649,19 @@ export default function Authenticated({
                             </div>
                         )}
                         
-                        <div className="flex-1 lg:hidden" />
-                        
-                        {/* Mobile 'Beranda' Pill */}
-                        <div className="lg:hidden flex items-center px-2 py-0.5 rounded-full bg-surface-container-lowest/15 backdrop-blur-md">
-                            <span className="w-1.5 h-1.5 rounded-full bg-tertiary-fixed mr-1.5 animate-pulse"></span>
-                            <span className="font-label-sm text-label-sm text-on-primary truncate max-w-[100px]">{route().current('dashboard') ? 'Beranda' : 'Akademik'}</span>
-                        </div>
+                        {/* Mobile 'Beranda' Pill (Hidden) */}
                     </div>
 
                     <div className="hidden lg:block flex-1" />
 
-                    <div className="hidden lg:flex items-center gap-2">
+                    <div className="flex items-center gap-2">
                         {!subscriptionLoading && (
                             <button
                                 onClick={isSubscribed ? unsubscribe : subscribe}
                                 className={`p-2 rounded-lg transition-all hover:scale-105 active:scale-95 flex items-center justify-center ${
                                     isSubscribed 
-                                        ? 'text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 hover:bg-indigo-100 dark:hover:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/50' 
-                                        : 'text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent'
+                                        ? 'text-on-primary lg:text-indigo-600 dark:text-indigo-400 bg-white/20 lg:bg-indigo-50 dark:bg-indigo-950/30 hover:bg-white/30 lg:hover:bg-indigo-100 dark:hover:bg-indigo-950/60 border border-white/20 lg:border-indigo-100 dark:border-indigo-900/50' 
+                                        : 'text-on-primary/70 lg:text-slate-400 hover:text-on-primary lg:hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 hover:bg-white/10 lg:hover:bg-slate-100 dark:hover:bg-slate-800 border border-transparent'
                                 }`}
                                 title={isSubscribed ? "Matikan Notifikasi Push" : "Aktifkan Notifikasi Push"}
                             >
@@ -683,7 +679,7 @@ export default function Authenticated({
 
                         <Dropdown>
                             <Dropdown.Trigger>
-                                <button onClick={handleBellClick} className="relative p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <button onClick={handleBellClick} className="relative p-2 rounded-lg text-on-primary lg:text-slate-500 hover:bg-white/10 lg:hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>
                                     {notifications?.unreadCount > 0 && (
                                         <span className="absolute top-1.5 right-1.5 flex h-2.5 w-2.5">
@@ -716,23 +712,23 @@ export default function Authenticated({
 
                         <Dropdown>
                             <Dropdown.Trigger>
-                                <button className="flex items-center gap-2 px-2 py-1.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                                <button className="flex items-center gap-2 px-2 py-1.5 rounded-xl lg:hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
                                     {user.avatar_url ? (
                                         <img src={user.avatar_url} alt="User Avatar" className="w-8 h-8 rounded-full object-cover" />
                                     ) : (
-                                        <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm">
+                                        <div className="w-8 h-8 rounded-full bg-white lg:bg-indigo-100 text-primary lg:text-indigo-600 flex items-center justify-center font-bold text-sm">
                                             {user.name.charAt(0)}
                                         </div>
                                     )}
-                                    <div className="hidden sm:block text-left leading-tight">
+                                    <div className="hidden sm:block text-left leading-tight text-on-primary lg:text-slate-900">
                                         <div className="text-sm font-semibold">{user.name}</div>
-                                        <div className="text-xs text-slate-400 capitalize">{userRoles[0] || 'Staff'}</div>
+                                        <div className="text-xs text-on-primary/80 lg:text-slate-400 capitalize">{userRoles[0] || 'Staff'}</div>
                                     </div>
-                                    <svg className="hidden sm:block w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                    <svg className="hidden sm:block w-4 h-4 text-on-primary/80 lg:text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round"/></svg>
                                 </button>
                             </Dropdown.Trigger>
                             <Dropdown.Content>
-                                <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
+                                <Dropdown.Link href={route('profile.edit')}>Edit Profil</Dropdown.Link>
                                 <LogoutButton action={route('logout')} className="block w-full px-4 py-2 text-start text-sm leading-5 text-gray-700 transition duration-150 ease-in-out hover:bg-gray-100 focus:bg-gray-100 focus:outline-none dark:text-gray-300 dark:hover:bg-gray-800 dark:focus:bg-gray-800">Log Out</LogoutButton>
                             </Dropdown.Content>
                         </Dropdown>
@@ -851,7 +847,7 @@ export default function Authenticated({
                         <span className="material-symbols-outlined text-[22px]">dashboard</span>
                         <span className="font-label-sm text-label-sm mt-0.5">Beranda</span>
                     </Link>
-                    <Link href={route('portal.attendance.scanner')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('portal.attendance.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                    <Link href={route('attendances.scanner')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('attendances.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
                         <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>qr_code_scanner</span>
                         <span className="font-label-sm text-label-sm mt-0.5 whitespace-nowrap">Presensi</span>
                     </Link>
@@ -863,9 +859,9 @@ export default function Authenticated({
                         <span className="material-symbols-outlined text-[22px]">fact_check</span>
                         <span className="font-label-sm text-label-sm mt-0.5 whitespace-nowrap">Asesmen</span>
                     </Link>
-                    <Link href={route('profile.edit')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('profile.edit') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
-                        <span className="material-symbols-outlined text-[22px]">account_circle</span>
-                        <span className="font-label-sm text-label-sm mt-0.5">Profil</span>
+                    <Link href={route('teacher.consultations.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('teacher.consultations.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">psychology</span>
+                        <span className="font-label-sm text-label-sm mt-0.5">Bimbingan</span>
                     </Link>
                 </div>
             </nav>

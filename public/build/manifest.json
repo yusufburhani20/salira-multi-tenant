@@ -1709,7 +1709,7 @@
     ]
   },
   "resources/js/Pages/User/Attendances/Scanner.tsx": {
-    "file": "assets/Scanner-dLD7WrC5.js",
+    "file": "assets/Scanner-Q9hmgAyq.js",
     "name": "Scanner",
     "src": "resources/js/Pages/User/Attendances/Scanner.tsx",
     "isDynamicEntry": true,
@@ -1752,7 +1752,7 @@
     ]
   },
   "resources/js/app.tsx": {
-    "file": "assets/app-DLoITq5N.js",
+    "file": "assets/app-CMly2QM4.js",
     "name": "app",
     "src": "resources/js/app.tsx",
     "isEntry": true,
@@ -1847,7 +1847,7 @@
       "resources/js/Pages/Welcome.tsx"
     ],
     "css": [
-      "assets/app-EtGr7mwU.css"
+      "assets/app-CpOMnwx6.css"
     ]
   }
 }

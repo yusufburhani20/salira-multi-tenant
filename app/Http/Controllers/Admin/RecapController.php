@@ -102,6 +102,70 @@ class RecapController extends Controller
 
 
     // --- Attendance Recap ---
+    public function attendanceDailyData(Request $request)
+    {
+        $classId = $request->academic_class_id;
+        if (!$classId) return response()->json(['error' => 'Class required'], 400);
+
+        $date = $request->start_date ? Carbon::parse($request->start_date) : Carbon::today();
+
+        $class = AcademicClass::withoutGlobalScope('active_year')->with(['students' => function($q) {
+            $q->orderBy('name');
+        }])->findOrFail($classId);
+
+        $attendances = StudentAttendance::with(['classAgenda.teacher', 'classAgenda.schedule'])
+            ->where('academic_class_id', $classId)
+            ->whereDate('date', $date)
+            ->get();
+
+        $agendas = collect();
+        foreach ($attendances as $att) {
+            if ($att->classAgenda) {
+                if (!$agendas->has($att->class_agenda_id)) {
+                    $agendas->put($att->class_agenda_id, $att->classAgenda);
+                }
+            }
+        }
+        
+        $sortedAgendas = $agendas->sortBy(function($agenda) {
+            return $agenda->schedule ? $agenda->schedule->start_time : '99:99:99';
+        })->values();
+
+        $columns = $sortedAgendas->map(function($agenda) {
+            return [
+                'id' => $agenda->id,
+                'subject' => $agenda->schedule ? $agenda->schedule->subject : 'Agenda',
+                'teacher' => $agenda->teacher ? $agenda->teacher->name : '-',
+                'time' => $agenda->schedule ? substr($agenda->schedule->start_time, 0, 5) . ' - ' . substr($agenda->schedule->end_time, 0, 5) : '-',
+            ];
+        });
+
+        $attByStudent = $attendances->groupBy('student_id');
+        
+        $studentsData = $class->students->map(function($student) use ($attByStudent) {
+            $studentAtts = $attByStudent->get($student->id, collect());
+            $attMap = [];
+            foreach ($studentAtts as $att) {
+                if ($att->class_agenda_id) {
+                    $attMap[$att->class_agenda_id] = strtolower($att->status->value ?? $att->status);
+                }
+            }
+            return [
+                'id' => $student->id,
+                'name' => $student->name,
+                'nisn' => $student->nisn,
+                'attendances' => $attMap,
+            ];
+        });
+
+        return response()->json([
+            'class_name' => $class->name,
+            'date' => $date->translatedFormat('l, d F Y'),
+            'columns' => $columns,
+            'students' => $studentsData,
+        ]);
+    }
+
     public function attendanceData(Request $request)
     {
         $this->resolveSemesterDates($request);

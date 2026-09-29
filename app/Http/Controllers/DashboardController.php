@@ -398,7 +398,7 @@ class DashboardController extends Controller
             $q->wherePivot('is_active', true)->orderBy('name');
         }])->findOrFail($classId);
 
-        $attendances = \App\Models\StudentAttendance::with(['classAgenda.teacher', 'classAgenda.schedule', 'schedule'])
+        $attendances = \App\Models\StudentAttendance::with(['classAgenda.teacher', 'classAgenda.schedule'])
             ->where('academic_class_id', $classId)
             ->whereDate('date', $today)
             ->get();

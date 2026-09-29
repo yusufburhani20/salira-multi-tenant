@@ -155,6 +155,7 @@ export default function ReportIndex({ auth, classes, subjects, semesters = [], a
         try {
             let url = '';
             switch (activeTab) {
+                case 'attendance_daily': url = route('admin.reports.attendance-daily.data'); break;
                 case 'attendance': url = route('admin.reports.attendance.data'); break;
                 case 'attendance_subject': url = route('admin.reports.attendance-subject.data'); break;
                 case 'assessment': url = route('admin.reports.assessments.data'); break;
@@ -202,6 +203,7 @@ export default function ReportIndex({ auth, classes, subjects, semesters = [], a
                     {/* Tab Navigation */}
                     <div className="flex flex-wrap gap-2 overflow-x-auto pb-2">
                         {[
+                            { id: 'attendance_daily', label: 'Rekap Harian', icon: UserGroupIcon },
                             { id: 'attendance', label: 'Rekap Absensi (Umum)', icon: UserGroupIcon },
                             { id: 'attendance_subject', label: 'Rekap Absensi (Mapel)', icon: AcademicCapIcon },
                             { id: 'assessment', label: 'Rekap Asesmen', icon: AcademicCapIcon },
@@ -525,6 +527,7 @@ export default function ReportIndex({ auth, classes, subjects, semesters = [], a
                             </div>
                         ) : (
                             <div className="p-0">
+                                {activeTab === 'attendance_daily' && <AttendanceDailyTable data={results.attendance_daily} />}
                                 {activeTab === 'attendance' && <AttendanceTable data={results.attendance} />}
                                 {activeTab === 'attendance_subject' && <AttendanceTable data={results.attendance_subject} />}
                                 {activeTab === 'assessment' && <AssessmentTable data={results.assessment} />}
@@ -770,3 +773,60 @@ function DB_COLLECT_STUDENTS(assessments: any[]) {
     return Array.from(studentsSet).sort();
 }
 
+function AttendanceDailyTable({ data }: { data: any }) {
+    if (!data) return <div className="text-center py-10 text-gray-500">Pilih kelas dan bulan untuk melihat data</div>;
+    if (data.error) return <div className="text-center py-10 text-red-500">{data.error}</div>;
+    if (!data.columns || data.columns.length === 0) return <div className="text-center py-10 text-gray-500">Tidak ada data jurnal/absensi pada tanggal ini.</div>;
+
+    return (
+        <div className="bg-white dark:bg-slate-800 overflow-hidden">
+            <div className="p-4 border-b border-slate-100 dark:border-slate-700">
+                <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">Rekap Harian: {data.class_name}</h3>
+                <p className="text-sm text-slate-500">{data.date}</p>
+            </div>
+            <div className="overflow-x-auto custom-scrollbar">
+                <table className="w-full text-sm text-left">
+                    <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-600 dark:text-slate-400 font-bold border-b border-slate-100 dark:border-slate-700">
+                        <tr>
+                            <th className="px-4 py-3 whitespace-nowrap border-r border-slate-200 dark:border-slate-700 w-10">No</th>
+                            <th className="px-4 py-3 whitespace-nowrap border-r border-slate-200 dark:border-slate-700 sticky left-0 z-10 bg-slate-50 dark:bg-slate-900 shadow-[2px_0px_5px_rgba(0,0,0,0.05)]">Nama Siswa</th>
+                            {data.columns.map((col: any) => (
+                                <th key={col.id} className="px-4 py-3 text-center border-r border-slate-200 dark:border-slate-700 min-w-[120px]">
+                                    <div className="text-xs font-black">{col.subject}</div>
+                                    <div className="text-[10px] font-normal mt-0.5 text-slate-500">{col.teacher}</div>
+                                    <div className="text-[9px] mt-1 bg-slate-200 dark:bg-slate-700 rounded px-1.5 py-0.5 inline-block">{col.time}</div>
+                                </th>
+                            ))}
+                        </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50">
+                        {data.students.map((student: any, i: number) => (
+                            <tr key={student.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/50 transition-colors">
+                                <td className="px-4 py-3 text-slate-400 border-r border-slate-100 dark:border-slate-800 text-xs">{i + 1}</td>
+                                <td className="px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 border-r border-slate-100 dark:border-slate-800 sticky left-0 z-10 bg-white dark:bg-slate-800 text-xs shadow-[2px_0px_5px_rgba(0,0,0,0.05)]">{student.name}</td>
+                                {data.columns.map((col: any) => {
+                                    const status = student.attendances[col.id];
+                                    return (
+                                        <td key={col.id} className="px-4 py-3 text-center border-r border-slate-100 dark:border-slate-800">
+                                            {status === 'hadir' || status === 'terlambat' ? (
+                                                <span className="inline-flex px-2 py-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 rounded">Hadir</span>
+                                            ) : status === 'sakit' ? (
+                                                <span className="inline-flex px-2 py-1 text-[10px] font-bold text-amber-700 bg-amber-100 rounded">Sakit</span>
+                                            ) : status === 'izin' ? (
+                                                <span className="inline-flex px-2 py-1 text-[10px] font-bold text-indigo-700 bg-indigo-100 rounded">Izin</span>
+                                            ) : status === 'alpha' ? (
+                                                <span className="inline-flex px-2 py-1 text-[10px] font-bold text-rose-700 bg-rose-100 rounded">Alpha</span>
+                                            ) : (
+                                                <span className="inline-flex px-2 py-1 text-[10px] font-bold text-slate-400 bg-slate-50 rounded">-</span>
+                                            )}
+                                        </td>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
+}

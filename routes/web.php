@@ -140,6 +140,11 @@ Route::middleware('auth')->group(function () {
         Route::prefix('reports')->name('reports.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\RecapController::class, 'index'])->name('index');
             
+            // Daily Attendance
+            Route::get('/attendance-daily/data', [\App\Http\Controllers\Admin\RecapController::class, 'attendanceDailyData'])->name('attendance-daily.data');
+            Route::get('/attendance-daily/export', [\App\Http\Controllers\Admin\RecapController::class, 'attendanceDailyExport'])->name('attendance-daily.export');
+            Route::get('/attendance-daily/pdf', [\App\Http\Controllers\Admin\RecapController::class, 'attendanceDailyPdf'])->name('attendance-daily.pdf');
+
             // Attendance
             Route::get('/attendance/data', [\App\Http\Controllers\Admin\RecapController::class, 'attendanceData'])->name('attendance.data');
             Route::get('/attendance/export', [\App\Http\Controllers\Admin\RecapController::class, 'attendanceExport'])->name('attendance.export');

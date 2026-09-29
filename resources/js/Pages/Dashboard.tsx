@@ -57,6 +57,10 @@ export default function Dashboard({
         }
     };
 
+    if (typeof window !== 'undefined') {
+        (window as any).openClassGrid = openClassGrid;
+    }
+
     const { props } = usePage();
     const { vapid_public_key } = props as any;
     const { isInstallable, installApp } = usePWA(vapid_public_key);

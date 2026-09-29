@@ -129,7 +129,11 @@ export default function MobileDashboard({ stats, studentsPerClass, chartData, ac
                         </div>
                         <div className="flex gap-space-xs overflow-x-auto pb-2 -mx-gutter-sm px-gutter-sm scroll-smooth" style={{ scrollbarWidth: 'none' }}>
                             {studentsPerClass.map((cls: any, idx: number) => (
-                                <div key={idx} className="min-w-[150px] bg-surface-container-low p-3 rounded-xl flex flex-col justify-between flex-shrink-0">
+                                <button 
+                                    key={idx} 
+                                    onClick={() => (window as any).openClassGrid && (window as any).openClassGrid(cls.id)}
+                                    className="min-w-[150px] bg-surface-container-low p-3 rounded-xl flex flex-col justify-between flex-shrink-0 text-left hover:bg-surface-container transition-colors"
+                                >
                                     <div>
                                         <div className="flex items-center justify-between">
                                             <div className="flex flex-col">
@@ -154,7 +158,7 @@ export default function MobileDashboard({ stats, studentsPerClass, chartData, ac
                                             <span>{cls.belum_absen}</span>
                                         </div>
                                     </div>
-                                </div>
+                                </button>
                             ))}
                         </div>
                     </div>

@@ -851,17 +851,17 @@ export default function Authenticated({
                         <span className="material-symbols-outlined text-[22px]">dashboard</span>
                         <span className="font-label-sm text-label-sm mt-0.5">Beranda</span>
                     </Link>
-                    <Link href={route('admin.reports.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('admin.reports.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
-                        <span className="material-symbols-outlined text-[22px]">menu_book</span>
-                        <span className="font-label-sm text-label-sm mt-0.5">Akademik</span>
-                    </Link>
                     <Link href={route('portal.attendance.scanner')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('portal.attendance.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
-                        <span className="material-symbols-outlined text-[22px]">how_to_reg</span>
-                        <span className="font-label-sm text-label-sm mt-0.5">Kehadiran</span>
+                        <span className="material-symbols-outlined text-[22px]" style={{ fontVariationSettings: "'FILL' 1" }}>qr_code_scanner</span>
+                        <span className="font-label-sm text-label-sm mt-0.5 whitespace-nowrap">Presensi</span>
                     </Link>
-                    <Link href={route('admin.inventory.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('admin.inventory.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
-                        <span className="material-symbols-outlined text-[22px]">inventory_2</span>
-                        <span className="font-label-sm text-label-sm mt-0.5">Sarpras</span>
+                    <Link href={route('teacher.agendas.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('teacher.agendas.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">edit_calendar</span>
+                        <span className="font-label-sm text-label-sm mt-0.5 whitespace-nowrap">Jurnal</span>
+                    </Link>
+                    <Link href={route('teacher.assessments.index')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('teacher.assessments.*') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
+                        <span className="material-symbols-outlined text-[22px]">fact_check</span>
+                        <span className="font-label-sm text-label-sm mt-0.5 whitespace-nowrap">Asesmen</span>
                     </Link>
                     <Link href={route('profile.edit')} className={`flex flex-col items-center justify-center min-w-[56px] min-h-[44px] transition-colors py-1 ${route().current('profile.edit') ? 'text-primary font-semibold' : 'text-on-surface-variant hover:text-primary'}`}>
                         <span className="material-symbols-outlined text-[22px]">account_circle</span>

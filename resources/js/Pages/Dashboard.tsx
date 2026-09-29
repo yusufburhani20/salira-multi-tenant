@@ -36,6 +36,24 @@ export default function Dashboard({
     const [startDate, setStartDate] = useState(filters?.start_date || '');
     const [endDate, setEndDate] = useState(filters?.end_date || '');
 
+    const [selectedGridClassId, setSelectedGridClassId] = useState<number | null>(null);
+    const [gridData, setGridData] = useState<any>(null);
+    const [gridLoading, setGridLoading] = useState(false);
+
+    const openClassGrid = async (id: number) => {
+        setSelectedGridClassId(id);
+        setGridLoading(true);
+        try {
+            const response = await fetch(`/dashboard/class/${id}/grid`);
+            const data = await response.json();
+            setGridData(data);
+        } catch (error) {
+            console.error('Failed to fetch grid data', error);
+        } finally {
+            setGridLoading(false);
+        }
+    };
+
     const { props } = usePage();
     const { vapid_public_key } = props as any;
     const { isInstallable, installApp } = usePWA(vapid_public_key);
@@ -275,7 +293,7 @@ export default function Dashboard({
                                     return (
                                         <button
                                             key={cls.id}
-                                            onClick={() => handleFilterChange(isActive ? '' : String(cls.id), startDate, endDate)}
+                                            onClick={() => openClassGrid(cls.id)}
                                             className={`flex-1 min-w-[200px] rounded-xl border p-4 text-left transition-all duration-200 cursor-pointer group ${
                                                 isActive
                                                     ? 'bg-salira-600 border-transparent shadow-lg shadow-salira-600/30 ring-2 ring-salira-600 ring-offset-2 scale-[1.02]'
@@ -588,6 +606,90 @@ export default function Dashboard({
 
                 </div>
             </div>
+
+            {/* CLASS DAILY GRID MODAL */}
+            {selectedGridClassId && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-5 sm:p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-900">
+                            <div>
+                                <h3 className="text-xl font-black text-slate-800 dark:text-slate-100">
+                                    Rekap Harian: {gridData?.class_name || 'Memuat...'}
+                                </h3>
+                                <p className="text-sm font-semibold text-slate-500 mt-1">{gridData?.date || 'Memuat...'}</p>
+                            </div>
+                            <button 
+                                onClick={() => setSelectedGridClassId(null)}
+                                className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                            >
+                                <svg className="w-6 h-6 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                            </button>
+                        </div>
+                        
+                        <div className="flex-1 overflow-auto p-0 relative">
+                            {gridLoading ? (
+                                <div className="flex flex-col items-center justify-center h-64">
+                                    <div className="w-10 h-10 border-4 border-salira-200 border-t-salira-600 rounded-full animate-spin"></div>
+                                    <p className="mt-4 text-slate-500 font-semibold">Mengambil data absensi...</p>
+                                </div>
+                            ) : gridData?.columns?.length > 0 ? (
+                                <table className="w-full text-left border-collapse text-sm">
+                                    <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th className="p-4 font-extrabold text-slate-600 dark:text-slate-300 border-b border-r border-slate-200 dark:border-slate-700 w-1/4">Nama Siswa</th>
+                                            {gridData.columns.map((col: any) => (
+                                                <th key={col.id} className="p-3 font-semibold text-center border-b border-slate-200 dark:border-slate-700 min-w-[120px]">
+                                                    <div className="text-xs font-black text-slate-700 dark:text-slate-200">{col.subject}</div>
+                                                    <div className="text-[10px] text-slate-500 mt-0.5">{col.teacher}</div>
+                                                    <div className="text-[9px] text-slate-400 mt-1 bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5 inline-block border border-slate-200 dark:border-slate-700">{col.time}</div>
+                                                </th>
+                                            ))}
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {gridData.students.map((student: any, idx: number) => (
+                                            <tr key={student.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition">
+                                                <td className="p-4 font-semibold text-slate-700 dark:text-slate-300 border-r border-slate-100 dark:border-slate-800">
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-xs text-slate-400 font-bold">{idx + 1}.</span>
+                                                        {student.name}
+                                                    </div>
+                                                </td>
+                                                {gridData.columns.map((col: any) => {
+                                                    const status = student.attendances[col.id];
+                                                    return (
+                                                        <td key={col.id} className="p-3 text-center">
+                                                            {status === 'hadir' || status === 'terlambat' ? (
+                                                                <span className="inline-flex px-2.5 py-1 text-[10px] font-bold text-emerald-700 bg-emerald-100 rounded-lg">Hadir</span>
+                                                            ) : status === 'sakit' ? (
+                                                                <span className="inline-flex px-2.5 py-1 text-[10px] font-bold text-amber-700 bg-amber-100 rounded-lg">Sakit</span>
+                                                            ) : status === 'izin' ? (
+                                                                <span className="inline-flex px-2.5 py-1 text-[10px] font-bold text-indigo-700 bg-indigo-100 rounded-lg">Izin</span>
+                                                            ) : status === 'alpha' ? (
+                                                                <span className="inline-flex px-2.5 py-1 text-[10px] font-bold text-rose-700 bg-rose-100 rounded-lg">Alpha</span>
+                                                            ) : (
+                                                                <span className="inline-flex px-2.5 py-1 text-[10px] font-bold text-slate-400 bg-slate-50 rounded-lg">-</span>
+                                                            )}
+                                                        </td>
+                                                    );
+                                                })}
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-64">
+                                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4 text-slate-400">
+                                        <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                    <h4 className="text-lg font-bold text-slate-700">Belum Ada Agenda</h4>
+                                    <p className="text-slate-500 text-sm mt-1">Belum ada absensi mata pelajaran yang diisi hari ini.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
         </AuthenticatedLayout>
     );
 }

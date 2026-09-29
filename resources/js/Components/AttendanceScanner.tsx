@@ -226,7 +226,7 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
             // Draw User Marker
             const userIcon = L.divIcon({
                 className: 'custom-user-icon',
-                html: `<div class="w-5 h-5 bg-indigo-600 rounded-full border-2 border-white shadow-xl flex items-center justify-center"><div class="w-2 h-2 bg-white rounded-full animate-ping"></div></div>`,
+                html: `<div class="w-5 h-5 bg-salira-600 rounded-full border-2 border-white shadow-xl flex items-center justify-center"><div class="w-2 h-2 bg-white rounded-full animate-ping"></div></div>`,
                 iconSize: [20, 20],
                 iconAnchor: [10, 10]
             });
@@ -298,21 +298,21 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
 
     if (isCheckedOut) {
         return (
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 text-center h-full flex flex-col justify-center items-center space-y-4 shadow-md transition-shadow">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 text-center h-full flex flex-col justify-center items-center space-y-4 shadow-md transition-shadow">
                 <CheckCircleIcon className="w-16 h-16 text-emerald-500 animate-bounce" />
                 <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Presensi Selesai</h3>
-                    <p className="text-gray-500 dark:text-gray-400 mt-2">Anda telah menyelesaikan Check-In dan Check-Out hari ini.</p>
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">Presensi Selesai</h3>
+                    <p className="text-slate-500 dark:text-slate-400 mt-2">Anda telah menyelesaikan Check-In dan Check-Out hari ini.</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <form onSubmit={submit(isCheckedIn ? 'checkOut' : 'checkIn')} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-100 dark:border-gray-700 p-6 flex flex-col h-full shadow-md transition-shadow">
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 border-b pb-4 dark:border-gray-700 flex justify-between items-center">
+        <form onSubmit={submit(isCheckedIn ? 'checkOut' : 'checkIn')} className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 p-6 flex flex-col h-full shadow-md transition-shadow">
+            <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-4 border-b pb-4 dark:border-slate-700 flex justify-between items-center">
                 <span>{isCheckedIn ? 'Check-Out (Pulang)' : 'Check-In (Hadir)'} - Jendela Pemindai</span>
-                {isCheckedIn && <span className="text-xs bg-indigo-100 text-indigo-800 dark:bg-indigo-900/50 dark:text-indigo-300 px-2 py-1 rounded-full font-bold">Telah Hadir: {existingRecord.check_in}</span>}
+                {isCheckedIn && <span className="text-xs bg-salira-100 text-salira-800 dark:bg-salira-900/50 dark:text-salira-300 px-2 py-1 rounded-full font-bold">Telah Hadir: {existingRecord.check_in}</span>}
             </h3>
             
             <div className="flex-1 flex flex-col space-y-4">
@@ -332,7 +332,7 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
 
                 {/* Location Status Badge */}
                 {!location && (
-                    <div className={`flex items-center justify-center p-3 rounded-lg border ${locationError ? 'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400' : 'bg-gray-50 border-gray-200 text-gray-600 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400'}`}>
+                    <div className={`flex items-center justify-center p-3 rounded-lg border ${locationError ? 'bg-red-50 border-red-200 text-red-700 dark:bg-red-900/20 dark:border-red-800 dark:text-red-400' : 'bg-slate-50 border-slate-200 text-slate-600 dark:bg-slate-800 dark:border-slate-700 dark:text-slate-400'}`}>
                         {locationError ? (
                             <div className="flex flex-col items-center">
                                 <div className="flex items-center">
@@ -356,7 +356,7 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
                         <div className="relative">
                             <div 
                                 id="attendance-map" 
-                                className="w-full h-44 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden shadow-inner z-0"
+                                className="w-full h-44 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-inner z-0"
                             ></div>
                             {!leafletLoaded && (
                                 <div className="absolute inset-0 bg-slate-100 dark:bg-slate-800 flex items-center justify-center rounded-xl text-slate-400 text-xs">
@@ -381,12 +381,12 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
                 )}
 
                 {/* Camera Viewfinder */}
-                <div className="flex-1 min-h-[300px] flex flex-col items-center justify-center rounded-xl relative overflow-hidden bg-black shadow-inner border border-gray-200 dark:border-gray-700 group">
+                <div className="flex-1 min-h-[300px] flex flex-col items-center justify-center rounded-xl relative overflow-hidden bg-black shadow-inner border border-slate-200 dark:border-slate-700 group">
                     {cameraError && !photoPreview ? (
                         <div className="text-red-500 text-center p-4">
                             <CameraIcon className="w-10 h-10 mx-auto mb-2 opacity-50" />
                             <p className="text-sm font-medium">{cameraError}</p>
-                            <p className="text-xs mt-2 text-gray-400">Pastikan Anda memberi izin akses kamera pada browser.</p>
+                            <p className="text-xs mt-2 text-slate-400">Pastikan Anda memberi izin akses kamera pada browser.</p>
                             <button onClick={(e) => { e.preventDefault(); startCamera(); }} className="mt-4 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white text-sm transition-colors border border-white/20">Coba Ulang Kamera</button>
                         </div>
                     ) : (
@@ -414,14 +414,14 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
                                         className="bg-white/20 hover:bg-white/40 backdrop-blur-md border border-white/50 p-4 rounded-full shadow-lg transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 disabled:opacity-0"
                                     >
                                         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center">
-                                            <CameraIcon className="w-6 h-6 text-indigo-600" />
+                                            <CameraIcon className="w-6 h-6 text-salira-600" />
                                         </div>
                                     </button>
                                 ) : (
                                     <button 
                                         type="button" 
                                         onClick={retakePhoto}
-                                        className="bg-gray-900/80 hover:bg-gray-800 backdrop-blur-md border border-gray-600 px-4 py-2 rounded-full text-white text-sm font-semibold shadow-lg transition-all flex items-center space-x-2"
+                                        className="bg-slate-900/80 hover:bg-slate-800 backdrop-blur-md border border-slate-600 px-4 py-2 rounded-full text-white text-sm font-semibold shadow-lg transition-all flex items-center space-x-2"
                                     >
                                         <ArrowPathIcon className="w-4 h-4" />
                                         <span>Ulangi Foto</span>
@@ -435,7 +435,7 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
                 {/* Input Catatan Absensi */}
                 {location && photoPreview && (
                     <div className="space-y-1.5">
-                        <label className="block text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                        <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                             {isCheckedIn ? 'Catatan Pulang (Opsional)' : 'Catatan Masuk (Opsional)'}
                         </label>
                         <textarea
@@ -444,7 +444,7 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
                             placeholder={isCheckedIn ? 'Tulis aktivitas singkat hari ini...' : 'Tulis keterangan check-in jika diperlukan...'}
                             rows={2}
                             maxLength={500}
-                            className="w-full text-sm rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                            className="w-full text-sm rounded-xl border-slate-200 dark:border-slate-700 dark:bg-slate-900 dark:text-white shadow-sm focus:border-salira-500 focus:ring-salira-500"
                         />
                     </div>
                 )}
@@ -456,7 +456,7 @@ export default function AttendanceScanner({ existingRecord, geofences = [] }: { 
             <button 
                 type="submit" 
                 disabled={processing || !location || !photoPreview || !nearestGeofence?.valid}
-                className="mt-6 w-full py-4 px-4 bg-indigo-600 hover:bg-indigo-700 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:text-gray-500 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-lg transition-all flex justify-center items-center space-x-2 text-lg lg:text-xl active:scale-[0.98]"
+                className="mt-6 w-full py-4 px-4 bg-salira-600 hover:bg-salira-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed text-white rounded-xl font-bold shadow-lg transition-all flex justify-center items-center space-x-2 text-lg lg:text-xl active:scale-[0.98]"
             >
                 {processing ? (
                     <>

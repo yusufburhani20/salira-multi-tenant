@@ -23,7 +23,7 @@ export default function Scores({ scores }: { scores: any }) {
                                 <div className="bg-white dark:bg-slate-900 px-6 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700">
                                     <span className="text-xs font-bold text-slate-400 mr-2 uppercase">Rata-rata:</span>
                                     <span className="text-xl font-black text-indigo-600 dark:text-indigo-400">
-                                        {Math.round(subjectScores.reduce((acc: any, s: any) => acc + s.score, 0) / subjectScores.length)}
+                                        {Math.round(subjectScores.reduce((acc: any, s: any) => acc + Number(s.score), 0) / subjectScores.length)}
                                     </span>
                                 </div>
                             </div>

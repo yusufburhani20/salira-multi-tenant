@@ -67,7 +67,8 @@ class PortalController extends Controller
         ];
 
         // 3. Akademik (Scores grouped by Subject)
-        $scores = StudentScore::where('student_id', $studentId)
+        $scores = \Illuminate\Support\Facades\DB::table('student_scores')
+            ->where('student_scores.student_id', $studentId)
             ->join('daily_assessments', 'student_scores.daily_assessment_id', '=', 'daily_assessments.id')
             ->join('subjects', 'daily_assessments.subject_id', '=', 'subjects.id')
             ->whereBetween('daily_assessments.date', [$startDate, $endDate])
@@ -417,11 +418,11 @@ class PortalController extends Controller
     {
         $student = Auth::guard('student')->user();
         
-        $scores = StudentScore::with(['assessment'])
+        $scores = StudentScore::with(['assessment.subject'])
             ->where('student_id', $student->id)
             ->get()
             ->groupBy(function($s) {
-                return $s->assessment->subject;
+                return $s->assessment->subject->name ?? 'Lainnya';
             });
 
         return Inertia::render('Portal/Scores', [

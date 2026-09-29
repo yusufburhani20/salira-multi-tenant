@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, router, usePage } from '@inertiajs/react';
 import StatCard from '@/Components/StatCard';
 import Card, { CardHeader } from '@/Components/Card';
+import MobileDashboard from '@/Components/MobileDashboard';
 import { 
     DocumentChartBarIcon, 
     UserIcon, 
@@ -53,7 +54,7 @@ export default function Dashboard({
     return (
         <AuthenticatedLayout
             header={
-                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div className="hidden lg:flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                     <div>
                         <h2 className="text-xl font-black leading-tight text-slate-800 dark:text-slate-200 tracking-tight">
                             Dashboard Overview

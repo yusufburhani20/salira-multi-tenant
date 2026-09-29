@@ -545,7 +545,7 @@ export default function Authenticated({
                         return (
                             <div key={group.group}>
                                 {!sidebarCollapsed ? (
-                                    <span className="px-3 text-[10px] uppercase font-bold tracking-wider text-slate-400">
+                                    <span className="px-3 text-[10px] uppercase font-bold tracking-wider text-black">
                                         {group.group}
                                     </span>
                                 ) : (
@@ -560,10 +560,10 @@ export default function Authenticated({
                                             className={`flex items-center justify-between px-3 py-2 rounded-lg transition-all duration-150 ${
                                                 item.active
                                                     ? 'bg-salira-50 text-salira-700 font-bold shadow-sm'
-                                                    : 'text-slate-600 hover:text-salira-700 hover:bg-slate-50'
+                                                    : 'text-black hover:text-salira-700 hover:bg-slate-50'
                                             }`}
                                         >
-                                            <span className={`flex items-center gap-2.5 flex-shrink-0 ${item.active ? 'text-salira-600' : 'text-slate-400'}`}>
+                                            <span className={`flex items-center gap-2.5 flex-shrink-0 ${item.active ? 'text-salira-600' : 'text-black'}`}>
                                                 {item.icon}
                                                 {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
                                             </span>

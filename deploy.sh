@@ -120,7 +120,11 @@ chown -R "$(id -u):$(id -g)" /www/server/nodejs/cache 2>/dev/null || true
 export npm_config_cache="/tmp/.npm-cache-salira"
 mkdir -p "$npm_config_cache"
 
-"$NPM_BIN" install --legacy-peer-deps 2>&1 || die "npm install GAGAL!"
+# Hapus NODE_ENV sementara agar devDependencies (termasuk Vite) ikut diinstall
+export NODE_ENV=development
+"$NPM_BIN" install --legacy-peer-deps --include=dev 2>&1 || die "npm install GAGAL!"
+
+export NODE_ENV=production
 "$NPM_BIN" run build 2>&1 || die "npm run build GAGAL! Cek output di atas untuk detail error."
 
 

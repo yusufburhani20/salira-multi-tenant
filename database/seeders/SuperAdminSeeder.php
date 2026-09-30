@@ -15,39 +15,40 @@ use Illuminate\Support\Facades\Hash;
  * - Role "Super Admin"
  *
  * Jalankan: php artisan db:seed --class=SuperAdminSeeder
- *
- * PENTING: Ganti email dan password setelah selesai setup!
  */
 class SuperAdminSeeder extends Seeder
 {
     public function run(): void
     {
-        $email = 'superadmin@yayasan-idrisiyyah.sch.id';
+        $email = 'adminyayasan@idrisiyyah.sch.id';
+        $nip = 'adminyayasan';
+        $password = 'password';
 
-        $user = User::firstOrCreate(
-            ['email' => $email],
-            [
-                'name'      => 'Super Admin Yayasan',
-                'email'     => $email,
-                'password'  => Hash::make('Salira@2025!'), // Ganti setelah login pertama!
-                'school_id' => null,                        // NULL = akses semua sekolah
-                'status'    => UserStatus::active,
-                'nip'       => null,
-                'phone'     => null,
-            ]
-        );
+        // Cari user yang punya role Super Admin, atau buat baru
+        $user = User::role('Super Admin')->first() ?? clone new User;
+
+        $user->fill([
+            'name'      => 'Super Admin Yayasan',
+            'email'     => $email,
+            'password'  => Hash::make($password),
+            'school_id' => null,
+            'status'    => UserStatus::active,
+            'nip'       => $nip,
+        ]);
+        
+        $user->save();
 
         // Assign role Super Admin
         if (! $user->hasRole('Super Admin')) {
             $user->assignRole('Super Admin');
         }
 
-        $this->command->info("✅ Super Admin Yayasan berhasil dibuat:");
+        $this->command->info("✅ Super Admin Yayasan berhasil diperbarui:");
         $this->command->table(
             ['Field', 'Value'],
             [
-                ['Email',     $email],
-                ['Password',  'Salira@2025! (segera ganti setelah login!)'],
+                ['Email / NIP (Username)', "$email / $nip"],
+                ['Password',  $password],
                 ['school_id', 'NULL (akses semua sekolah)'],
                 ['Role',      'Super Admin'],
             ]

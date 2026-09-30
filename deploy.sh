@@ -125,8 +125,8 @@ export NODE_ENV=development
 "$NPM_BIN" install --legacy-peer-deps --include=dev 2>&1 || die "npm install GAGAL!"
 
 export NODE_ENV=production
-NPX_BIN="$(echo "$NPM_BIN" | sed 's|/npm$|/npx|')"
-"$NPX_BIN" vite build 2>&1 || die "npm run build (vite) GAGAL! Cek output di atas untuk detail error."
+NODE_BIN="$(echo "$NPM_BIN" | sed 's|/npm$|/node|')"
+"$NODE_BIN" node_modules/vite/bin/vite.js build 2>&1 || die "npm run build (vite) GAGAL! Cek output di atas untuk detail error."
 
 
 # 6. Membersihkan Cache Laravel

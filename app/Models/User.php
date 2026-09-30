@@ -147,4 +147,73 @@ class User extends Authenticatable
     {
         return $this->morphMany(DeviceToken::class, 'tokenable');
     }
+
+    // ── Multi-School Support ───────────────────────────────────────────────────
+
+    /**
+     * Sekolah-sekolah TAMBAHAN tempat user ini juga bertugas.
+     * Sekolah utama ada di kolom school_id.
+     */
+    public function schoolAssignments()
+    {
+        return $this->hasMany(UserSchoolAssignment::class);
+    }
+
+    /**
+     * Semua sekolah yang bisa diakses user ini:
+     * sekolah utama (school_id) + semua sekolah tambahan yang aktif.
+     * Mengembalikan Collection of School.
+     */
+    public function allSchools()
+    {
+        $primarySchool = $this->school_id
+            ? School::where('id', $this->school_id)->get()
+            : collect();
+
+        $additionalSchools = School::whereIn(
+            'id',
+            $this->schoolAssignments()->active()->pluck('school_id')
+        )->get();
+
+        return $primarySchool->merge($additionalSchools)->unique('id')->values();
+    }
+
+    /**
+     * Semua school_id yang bisa diakses user (primary + tambahan aktif).
+     * Berguna untuk query filtering.
+     */
+    public function allSchoolIds(): array
+    {
+        $ids = $this->schoolAssignments()->active()->pluck('school_id')->toArray();
+
+        if ($this->school_id) {
+            array_unshift($ids, $this->school_id);
+        }
+
+        return array_unique($ids);
+    }
+
+    /**
+     * Apakah user ini mengajar di lebih dari satu sekolah?
+     */
+    public function isMultiSchool(): bool
+    {
+        return $this->schoolAssignments()->active()->exists();
+    }
+
+    /**
+     * Apakah user ini punya akses ke sekolah tertentu?
+     * (baik sebagai sekolah utama maupun sekolah tambahan)
+     */
+    public function hasAccessToSchool(int $schoolId): bool
+    {
+        if ($this->school_id === $schoolId) {
+            return true;
+        }
+
+        return $this->schoolAssignments()
+            ->active()
+            ->where('school_id', $schoolId)
+            ->exists();
+    }
 }

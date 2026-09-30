@@ -33,7 +33,7 @@ class RecapController extends Controller
         $subjects = Subject::with(['academicClasses' => function($q) {
             $q->withoutGlobalScope('active_year');
         }])->orderBy('name')->get();
-        $semesters = Semester::with('academicYear')
+        $semesters = Semester::whereHas('academicYear')->with('academicYear')
             ->get()
             ->map(function($sem) {
                 return [
@@ -46,8 +46,16 @@ class RecapController extends Controller
                 ];
             });
         $activeSemester = $this->getActiveSemester();
+        $schoolId = $this->schoolId();
         $teachers = \App\Models\User::role(['Guru', 'Wali Kelas', 'Super Admin'])
-            ->when($this->schoolId(), fn($q) => $q->where('users.school_id', $this->schoolId()))
+            ->when($schoolId, function($q) use ($schoolId) {
+                $q->where(function($subQ) use ($schoolId) {
+                    $subQ->where('users.school_id', $schoolId)
+                         ->orWhereHas('schoolAssignments', function($sq) use ($schoolId) {
+                             $sq->where('school_id', $schoolId);
+                         });
+                });
+            })
             ->orderBy('name')
             ->get(['id', 'name']);
         

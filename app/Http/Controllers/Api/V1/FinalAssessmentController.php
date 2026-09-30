@@ -22,7 +22,7 @@ class FinalAssessmentController extends Controller
             ->first();
 
         if (!$activeSemester) {
-            $activeSemester = Semester::where('is_active', true)->first();
+            $activeSemester = Semester::where('is_active', true)->whereHas('academicYear')->first();
         }
 
         return $activeSemester?->id;

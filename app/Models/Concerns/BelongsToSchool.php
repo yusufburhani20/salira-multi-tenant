@@ -49,14 +49,25 @@ trait BelongsToSchool
                 return;
             }
 
-            // 2. Super Admin Yayasan (school_id = null) — bisa lihat semua, skip filter
+            // 2. Super Admin Yayasan (school_id = null)
             if (!isset($user->school_id) || $user->school_id === null) {
+                if (request()->hasSession() && session()->has('active_school_id')) {
+                    $activeSchoolId = session('active_school_id');
+                    if ($activeSchoolId) {
+                        $table = (new static)->getTable();
+                        $builder->where("{$table}.school_id", $activeSchoolId);
+                    }
+                }
                 return;
             }
 
-            // 3. User biasa — filter berdasarkan school_id mereka
+            // 3. User biasa (termasuk guru multi-sekolah)
             $table = (new static)->getTable();
-            $builder->where("{$table}.school_id", $user->school_id);
+            $activeSchoolId = request()->hasSession() && session()->has('active_school_id') 
+                ? session('active_school_id') 
+                : $user->school_id;
+                
+            $builder->where("{$table}.school_id", $activeSchoolId);
         });
     }
 

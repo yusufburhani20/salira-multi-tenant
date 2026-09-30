@@ -21,7 +21,7 @@ class AttendanceController extends Controller
         $schoolId = $this->schoolId();
         $query = Attendance::with('user')
             ->join('users', 'attendances.user_id', '=', 'users.id')
-            ->when($schoolId, fn($q) => $q->where('users.school_id', $schoolId))
+            ->when($schoolId, fn($q) => $q->where('attendances.school_id', $schoolId))
             ->select('attendances.*');
 
         if ($request->has(['start_date', 'end_date'])) {
@@ -56,7 +56,7 @@ class AttendanceController extends Controller
         $attendances = Attendance::with('user')
             ->whereBetween('date', [$startDate, $endDate])
             ->join('users', 'attendances.user_id', '=', 'users.id')
-            ->when($schoolId, fn($q) => $q->where('users.school_id', $schoolId))
+            ->when($schoolId, fn($q) => $q->where('attendances.school_id', $schoolId))
             ->orderBy('users.name', 'asc')
             ->orderBy('attendances.date', 'asc')
             ->select('attendances.*')

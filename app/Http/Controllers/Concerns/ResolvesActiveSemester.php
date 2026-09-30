@@ -27,7 +27,7 @@ trait ResolvesActiveSemester
             ->whereHas('academicYear', fn ($q) => $q->where('is_active', true))
             ->with('academicYear')
             ->first()
-            ?? Semester::where('is_active', true)->with('academicYear')->first();
+            ?? Semester::where('is_active', true)->whereHas('academicYear')->with('academicYear')->first();
     }
 
     /**
@@ -70,7 +70,8 @@ trait ResolvesActiveSemester
      */
     protected function getSemesterOptions(): \Illuminate\Support\Collection
     {
-        return Semester::with('academicYear')
+        return Semester::whereHas('academicYear')
+            ->with('academicYear')
             ->orderByDesc('id')
             ->get()
             ->map(fn ($sem) => [

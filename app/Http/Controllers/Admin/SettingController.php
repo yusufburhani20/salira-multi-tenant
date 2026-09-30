@@ -17,65 +17,115 @@ class SettingController extends Controller
     use HasSchoolScope;
     public function index()
     {
-        return Inertia::render('Admin/Settings/Index', [
-            'settings' => [
+        $user = auth()->user();
+        $isYayasan = is_null($user->school_id);
+
+        if ($isYayasan) {
+            $data = [
                 'school_name'              => Setting::get('school_name', 'SALIRA ACADEMY'),
                 'school_address'           => Setting::get('school_address', ''),
                 'school_phone'             => Setting::get('school_phone', ''),
                 'school_email'             => Setting::get('school_email', ''),
                 'report_location'          => Setting::get('report_location', 'Kota'),
                 'school_logo'              => Setting::get('school_logo') ? Storage::url(Setting::get('school_logo')) : null,
-                'school_favicon'           => Setting::get('school_favicon') ? Storage::url(Setting::get('school_favicon')) : null,
-                'github_username'          => Setting::get('github_username', ''),
-                'github_token'             => Setting::get('github_token', ''),
-            ]
+                'school_favicon'           => Setting::get('school_favicon', null, null) ? Storage::url(Setting::get('school_favicon', null, null)) : null,
+                'github_username'          => Setting::get('github_username', '', null),
+                'github_token'             => Setting::get('github_token', '', null),
+            ];
+        } else {
+            $school = \App\Models\School::find($user->school_id);
+            $data = [
+                'school_name'              => $school->name ?? '',
+                'school_address'           => $school->address ?? '',
+                'school_phone'             => $school->phone ?? '',
+                'school_email'             => $school->email ?? '',
+                'report_location'          => '',
+                'school_logo'              => $school->logo ? Storage::url($school->logo) : null,
+                'school_favicon'           => null,
+                'github_username'          => '',
+                'github_token'             => '',
+            ];
+        }
+
+        return Inertia::render('Admin/Settings/Index', [
+            'settings' => $data,
+            'isYayasan' => $isYayasan,
         ]);
     }
 
     public function update(Request $request)
     {
-        $request->validate([
-            'school_name'        => 'required|string|max:255',
-            'school_address'     => 'nullable|string',
-            'school_phone'       => 'nullable|string|max:50',
-            'school_email'       => 'nullable|email|max:100',
-            'report_location'    => 'nullable|string|max:100',
-            'school_logo'        => 'nullable|image|max:2048',
-            'school_favicon'     => 'nullable|image|mimes:ico,png,jpg,jpeg,svg|max:1024',
-            'github_username'    => 'nullable|string|max:100',
-            'github_token'       => 'nullable|string|max:255',
-        ]);
+        $user = auth()->user();
+        $isYayasan = is_null($user->school_id);
 
-        Setting::set('school_name', $request->school_name);
-        Setting::set('school_address', $request->school_address);
-        Setting::set('school_phone', $request->school_phone);
-        Setting::set('school_email', $request->school_email);
-        Setting::set('report_location', $request->report_location);
-        Setting::set('github_username', $request->github_username);
-        Setting::set('github_token', $request->github_token);
+        if ($isYayasan) {
+            $request->validate([
+                'school_name'        => 'required|string|max:255',
+                'school_address'     => 'nullable|string',
+                'school_phone'       => 'nullable|string|max:50',
+                'school_email'       => 'nullable|email|max:100',
+                'report_location'    => 'nullable|string|max:100',
+                'school_logo'        => 'nullable|image|max:2048',
+                'school_favicon'     => 'nullable|image|mimes:ico,png,jpg,jpeg,svg|max:1024',
+                'github_username'    => 'nullable|string|max:100',
+                'github_token'       => 'nullable|string|max:255',
+            ]);
 
-        if ($request->hasFile('school_logo')) {
-            // Delete old logo
-            $oldLogo = Setting::get('school_logo');
-            if ($oldLogo) {
-                Storage::disk('public')->delete($oldLogo);
+            Setting::set('school_name', $request->school_name);
+            Setting::set('school_address', $request->school_address);
+            Setting::set('school_phone', $request->school_phone);
+            Setting::set('school_email', $request->school_email);
+            Setting::set('report_location', $request->report_location);
+            
+            // Pengaturan Global Yayasan
+            Setting::set('github_username', $request->github_username, null);
+            Setting::set('github_token', $request->github_token, null);
+
+            if ($request->hasFile('school_logo')) {
+                $oldLogo = Setting::get('school_logo');
+                if ($oldLogo) {
+                    Storage::disk('public')->delete($oldLogo);
+                }
+                $path = $request->file('school_logo')->store('settings', 'public');
+                Setting::set('school_logo', $path);
             }
 
-            $path = $request->file('school_logo')->store('settings', 'public');
-            Setting::set('school_logo', $path);
-        }
-
-        if ($request->hasFile('school_favicon')) {
-            $oldFavicon = Setting::get('school_favicon');
-            if ($oldFavicon) {
-                Storage::disk('public')->delete($oldFavicon);
+            if ($request->hasFile('school_favicon')) {
+                $oldFavicon = Setting::get('school_favicon', null, null);
+                if ($oldFavicon) {
+                    Storage::disk('public')->delete($oldFavicon);
+                }
+                $path = $request->file('school_favicon')->store('settings', 'public');
+                Setting::set('school_favicon', $path, null); // Global
             }
 
-            $path = $request->file('school_favicon')->store('settings', 'public');
-            Setting::set('school_favicon', $path);
-        }
+            return back()->with('success', 'Pengaturan aplikasi berhasil diperbarui');
+        } else {
+            $school = \App\Models\School::find($user->school_id);
+            $request->validate([
+                'school_name'        => 'required|string|max:255',
+                'school_address'     => 'nullable|string',
+                'school_phone'       => 'nullable|string|max:50',
+                'school_email'       => 'nullable|email|max:100',
+                'school_logo'        => 'nullable|image|max:2048',
+            ]);
 
-        return back()->with('success', 'Pengaturan berhasil diperbarui');
+            $school->name = $request->school_name;
+            $school->address = $request->school_address;
+            $school->phone = $request->school_phone;
+            $school->email = $request->school_email;
+
+            if ($request->hasFile('school_logo')) {
+                if ($school->logo) {
+                    Storage::disk('public')->delete($school->logo);
+                }
+                $path = $request->file('school_logo')->store('schools', 'public');
+                $school->logo = $path;
+            }
+
+            $school->save();
+            return back()->with('success', 'Profil unit sekolah berhasil diperbarui');
+        }
     }
 
     public function systemUpdate()

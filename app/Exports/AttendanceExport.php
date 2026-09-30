@@ -28,7 +28,7 @@ class AttendanceExport implements FromQuery, WithHeadings, WithMapping, WithStyl
             ->with('user')
             ->whereBetween('date', [$this->startDate, $this->endDate])
             ->join('users', 'attendances.user_id', '=', 'users.id')
-            ->when($this->schoolId, fn($q) => $q->where('users.school_id', $this->schoolId))
+            ->when($this->schoolId, fn($q) => $q->where('attendances.school_id', $this->schoolId))
             ->orderBy('users.name', 'asc')
             ->orderBy('attendances.date', 'asc')
             ->select('attendances.*');

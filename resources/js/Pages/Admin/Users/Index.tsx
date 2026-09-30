@@ -18,6 +18,7 @@ interface User {
     status: string;
     roles: Role[];
     school_id?: number | null;
+    school_assignments?: { id: number; school_id: number; is_active: boolean }[];
 }
 
 export default function UserIndex({ auth, users, roles, statuses, schools, isSuperAdmin }: PageProps<{ users: User[], roles: string[], statuses: {value: string, label: string}[], schools?: {id: number, name: string}[], isSuperAdmin?: boolean }>) {
@@ -40,6 +41,7 @@ export default function UserIndex({ auth, users, roles, statuses, schools, isSup
         telegram_id: '',
         status: statuses[0]?.value || 'active',
         school_id: '' as number | string,
+        additional_school_ids: [] as number[],
         roles: [] as string[],
         reset_password_default: false,
         reset_password_email: false,
@@ -61,6 +63,7 @@ export default function UserIndex({ auth, users, roles, statuses, schools, isSup
                 telegram_id: user.telegram_id || '',
                 status: user.status,
                 school_id: user.school_id || '',
+                additional_school_ids: user.school_assignments ? user.school_assignments.map(sa => sa.school_id) : [],
                 roles: user.roles.map(r => r.name),
                 reset_password_default: false,
                 reset_password_email: false,
@@ -75,6 +78,7 @@ export default function UserIndex({ auth, users, roles, statuses, schools, isSup
                 telegram_id: '',
                 status: 'active',
                 school_id: '',
+                additional_school_ids: [],
                 roles: [],
                 reset_password_default: false,
                 reset_password_email: false,
@@ -112,6 +116,14 @@ export default function UserIndex({ auth, users, roles, statuses, schools, isSup
             setData('roles', [...data.roles, role]);
         } else {
             setData('roles', data.roles.filter(r => r !== role));
+        }
+    };
+
+    const handleAdditionalSchoolChange = (schoolId: number, checked: boolean) => {
+        if (checked) {
+            setData('additional_school_ids', [...data.additional_school_ids, schoolId]);
+        } else {
+            setData('additional_school_ids', data.additional_school_ids.filter(id => id !== schoolId));
         }
     };
 
@@ -296,16 +308,45 @@ export default function UserIndex({ auth, users, roles, statuses, schools, isSup
                                         </div>
 
                                         {isSuperAdmin && schools && (
-                                            <div>
-                                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">School (Sekolah)</label>
-                                                <select value={data.school_id} onChange={e => setData('school_id', e.target.value)} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
-                                                    <option value="">-- Pilih Sekolah -- (Kosongkan jika Super Admin)</option>
-                                                    {schools.map(school => (
-                                                        <option key={school.id} value={school.id}>{school.name}</option>
-                                                    ))}
-                                                </select>
-                                                {errors.school_id && <p className="text-red-500 text-xs mt-1">{errors.school_id}</p>}
-                                            </div>
+                                            <>
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">School (Sekolah Utama)</label>
+                                                    <select value={data.school_id} onChange={e => {
+                                                        const newSchoolId = e.target.value;
+                                                        setData('school_id', newSchoolId);
+                                                        // Hapus dari additional schools jika sama
+                                                        if (newSchoolId && data.additional_school_ids.includes(Number(newSchoolId))) {
+                                                            setData('additional_school_ids', data.additional_school_ids.filter(id => id !== Number(newSchoolId)));
+                                                        }
+                                                    }} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 dark:bg-gray-900 dark:border-gray-700 dark:text-white">
+                                                        <option value="">-- Pilih Sekolah -- (Kosongkan jika Super Admin)</option>
+                                                        {schools.map(school => (
+                                                            <option key={school.id} value={school.id}>{school.name}</option>
+                                                        ))}
+                                                    </select>
+                                                    {errors.school_id && <p className="text-red-500 text-xs mt-1">{errors.school_id}</p>}
+                                                </div>
+
+                                                <div>
+                                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Sekolah Tambahan (Multi-School)</label>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 bg-gray-50 dark:bg-gray-900/50 p-4 rounded-lg border border-gray-100 dark:border-gray-700 max-h-48 overflow-y-auto">
+                                                        {schools.map(school => (
+                                                            <label key={`add_${school.id}`} className={`flex items-center space-x-2 text-sm cursor-pointer p-1 ${Number(data.school_id) === school.id ? 'opacity-50' : 'text-gray-800 dark:text-gray-200'}`}>
+                                                                <input 
+                                                                    type="checkbox" 
+                                                                    checked={data.additional_school_ids.includes(school.id)} 
+                                                                    onChange={e => handleAdditionalSchoolChange(school.id, e.target.checked)}
+                                                                    disabled={Number(data.school_id) === school.id}
+                                                                    className="rounded border-gray-300 text-primary shadow-sm focus:border-primary focus:ring focus:ring-primary dark:bg-gray-800 dark:border-gray-600 disabled:bg-gray-200 dark:disabled:bg-gray-700"
+                                                                />
+                                                                <span className="truncate" title={school.name}>{school.name}</span>
+                                                            </label>
+                                                        ))}
+                                                    </div>
+                                                    {errors.additional_school_ids && <p className="text-red-500 text-xs mt-1">{errors.additional_school_ids}</p>}
+                                                    <p className="text-xs text-gray-500 mt-1">Centang sekolah lain tempat guru/staff ini juga bertugas.</p>
+                                                </div>
+                                            </>
                                         )}
 
                                         <div>

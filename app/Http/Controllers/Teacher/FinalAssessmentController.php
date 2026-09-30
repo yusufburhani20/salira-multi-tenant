@@ -35,13 +35,13 @@ class FinalAssessmentController extends Controller
 
         // Fallback: any active semester
         if (!$activeSemester) {
-            $activeSemester = Semester::where('is_active', true)->with('academicYear')->first();
+            $activeSemester = Semester::where('is_active', true)->whereHas('academicYear')->with('academicYear')->first();
         }
 
         // Apply semester filter — default to active semester
         $semesterId = $request->semester_id ?? ($activeSemester?->id);
 
-        $query = FinalAssessment::with(['semester.academicYear', 'academicClass', 'subject']);
+        $query = FinalAssessment::whereHas('academicClass')->with(['semester.academicYear', 'academicClass', 'subject']);
         if (!Auth::user()->hasAnyRole(['Super Admin', 'Kepala Sekolah', 'Staff/TU'])) {
             $query->where('teacher_id', Auth::id());
         }
@@ -89,7 +89,7 @@ class FinalAssessmentController extends Controller
 
         // Fallback: any active semester
         if (!$activeSemester) {
-            $activeSemester = Semester::where('is_active', true)->with('academicYear')->first();
+            $activeSemester = Semester::where('is_active', true)->whereHas('academicYear')->with('academicYear')->first();
         }
 
         if (!$activeSemester) {
@@ -141,7 +141,7 @@ class FinalAssessmentController extends Controller
         $activeSemester = Semester::where('is_active', true)
             ->whereHas('academicYear', fn($q) => $q->where('is_active', true))
             ->first()
-            ?? Semester::where('is_active', true)->first();
+            ?? Semester::where('is_active', true)->whereHas('academicYear')->first();
 
         if (!$activeSemester) {
             return back()->with('error', 'Tidak ada semester aktif.');
@@ -408,7 +408,7 @@ class FinalAssessmentController extends Controller
     public function getStudents(Request $request, $classId)
     {
         $subjectId = $request->query('subject_id');
-        $activeSemester = Semester::where('is_active', true)->first();
+        $activeSemester = Semester::where('is_active', true)->whereHas('academicYear')->first();
 
         $class = AcademicClass::with(['students' => function($q) {
             $q->wherePivot('is_active', true)->orderBy('name');
@@ -527,7 +527,7 @@ class FinalAssessmentController extends Controller
         $assessments = $query->get();
 
         $semester = $request->semester_id
-            ? Semester::with('academicYear')->find($request->semester_id)
+            ? Semester::whereHas('academicYear')->with('academicYear')->find($request->semester_id)
             : null;
 
         return [

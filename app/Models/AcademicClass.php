@@ -30,6 +30,10 @@ class AcademicClass extends Model
             elseif (auth()->guard('sanctum')->hasUser()) $user = auth()->guard('sanctum')->user();
 
             $schoolId = $user ? $user->school_id : null;
+            if (request()->hasSession() && session()->has('active_school_id')) {
+                $schoolId = session('active_school_id') ?: $schoolId;
+            }
+
             $cacheKey = 'active_academic_year_id_' . ($schoolId ?? 'all');
 
             $activeYearIds = \Illuminate\Support\Facades\Cache::remember($cacheKey, 3600, function () use ($schoolId) {

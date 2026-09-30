@@ -17,13 +17,15 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class StudentReportController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ResolvesActiveSemester;
+
     public function resume()
     {
         $classes = AcademicClass::with(['academicYear', 'students' => function($q) {
             $q->wherePivot('is_active', true)->orderBy('name');
         }])->get();
 
-        $semesters = Semester::with('academicYear')
+        $semesters = Semester::whereHas('academicYear')->with('academicYear')
             ->get()
             ->map(function($sem) {
                 return [
@@ -34,7 +36,7 @@ class StudentReportController extends Controller
                     'is_active' => $sem->is_active,
                 ];
             });
-        $activeSemester = Semester::where('is_active', true)->first();
+        $activeSemester = $this->getActiveSemester();
 
         return Inertia::render('Admin/Reports/StudentResume', [
             'classes' => $classes,
@@ -54,7 +56,7 @@ class StudentReportController extends Controller
                 ]);
             }
         } elseif (!$request->has('start_date') && !$request->has('end_date')) {
-            $activeSem = Semester::where('is_active', true)->first();
+            $activeSem = $this->getActiveSemester();
             if ($activeSem) {
                 $request->merge([
                     'semester_id' => $activeSem->id,

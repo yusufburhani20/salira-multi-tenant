@@ -16,6 +16,7 @@ export default function Authenticated({
     const flash = props.flash as any;
     const user = props.auth.user as any;
     const school = (props as any).school as { name: string; logo: string | null; object: any };
+    const activeSchool = (props as any).activeSchool as { id: number; name: string; type: string } | null;
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const { vapid_public_key } = props as any;
@@ -649,6 +650,27 @@ export default function Authenticated({
                     <div className="hidden lg:block flex-1" />
 
                     <div className="flex items-center gap-2">
+                        {/* School Context Switcher — hanya tampil untuk user multi-school */}
+                        {user?.is_multi_school && activeSchool && (
+                            <Link
+                                href={route('school.select')}
+                                className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold
+                                    bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300
+                                    border border-indigo-200/60 dark:border-indigo-800/50
+                                    hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition-all"
+                                title="Ganti sekolah aktif"
+                            >
+                                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                                        d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z" />
+                                </svg>
+                                <span className="max-w-[140px] truncate">{activeSchool.name}</span>
+                                <svg className="w-3 h-3 opacity-60 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M19 9l-7 7-7-7" />
+                                </svg>
+                            </Link>
+                        )}
+
                         {!subscriptionLoading && (
                             <button
                                 onClick={isSubscribed ? unsubscribe : subscribe}

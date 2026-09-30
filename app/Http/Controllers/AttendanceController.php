@@ -24,9 +24,16 @@ class AttendanceController extends Controller
         return $earth_radius * $c;
     }
 
-    private function verifyGeofence($lat, $lon)
+    private function verifyGeofence($lat, $lon, $schoolId = null)
     {
-        $geofences = Geofence::where('is_active', true)->get();
+        $query = Geofence::where('is_active', true);
+        if ($schoolId) {
+            $query->where(function($q) use ($schoolId) {
+                $q->where('school_id', $schoolId)->orWhereNull('school_id');
+            });
+        }
+        
+        $geofences = $query->get();
         if ($geofences->isEmpty()) {
             return ['valid' => true, 'notes' => 'No active geofences configured', 'geofence' => null];
         }
@@ -66,7 +73,10 @@ class AttendanceController extends Controller
             return back()->with('error', 'You have already checked in today.');
         }
 
-        $geoCheck = $this->verifyGeofence($request->latitude, $request->longitude);
+        // Ambil context sekolah yang sedang aktif (bisa beda dengan sekolah utama)
+        $activeSchoolId = session('active_school_id') ?? $user->school_id;
+
+        $geoCheck = $this->verifyGeofence($request->latitude, $request->longitude, $activeSchoolId);
         if (!$geoCheck['valid']) {
             return back()->with('error', 'Gagal Check-In: Anda berada di luar radius lokasi yang diizinkan.');
         }
@@ -94,6 +104,7 @@ class AttendanceController extends Controller
         Attendance::updateOrCreate(
             ['user_id' => $user->id, 'date' => $date],
             [
+                'school_id' => $activeSchoolId,
                 'check_in' => Carbon::now()->format('H:i:s'),
                 'status' => $status,
                 'latitude' => $request->latitude,
@@ -134,7 +145,7 @@ class AttendanceController extends Controller
             return back()->with('error', 'You have already checked out today.');
         }
 
-        $geoCheck = $this->verifyGeofence($request->latitude, $request->longitude);
+        $geoCheck = $this->verifyGeofence($request->latitude, $request->longitude, $existing->school_id);
         if (!$geoCheck['valid']) {
             return back()->with('error', 'Gagal Check-Out: Anda berada di luar radius lokasi yang diizinkan.');
         }

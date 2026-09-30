@@ -22,7 +22,7 @@ class DailyAssessmentController extends Controller
 
     public function index(Request $request)
     {
-        $query = DailyAssessment::with(['academicClass']);
+        $query = DailyAssessment::whereHas('academicClass')->with(['academicClass']);
         if (!Auth::user()->hasAnyRole(['Super Admin', 'Kepala Sekolah', 'Staff/TU'])) {
             $query->where('teacher_id', Auth::id());
         }
@@ -326,7 +326,7 @@ class DailyAssessmentController extends Controller
 
         $semesterId = $request->input('semester_id');
         if (!$semesterId && !$request->has('start_date') && !$request->has('end_date')) {
-            $activeSemester = Semester::where('is_active', true)->first();
+            $activeSemester = $this->getActiveSemester();
             $semesterId = $activeSemester?->id;
         }
 

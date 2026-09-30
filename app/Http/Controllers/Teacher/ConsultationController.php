@@ -24,7 +24,7 @@ class ConsultationController extends Controller
 
     public function index(Request $request)
     {
-        $query = StudentConsultation::with(['student', 'academicClass']);
+        $query = StudentConsultation::whereHas('academicClass')->with(['student', 'academicClass']);
         if (!Auth::user()->hasAnyRole(['Super Admin', 'Kepala Sekolah', 'Staff/TU'])) {
             $query->where('teacher_id', Auth::id());
         }
@@ -232,7 +232,7 @@ class ConsultationController extends Controller
 
         $semesterId = $request->input('semester_id');
         if (!$semesterId && !$request->has('start_date') && !$request->has('end_date')) {
-            $activeSemester = Semester::where('is_active', true)->first();
+            $activeSemester = $this->getActiveSemester();
             $semesterId = $activeSemester?->id;
         }
 

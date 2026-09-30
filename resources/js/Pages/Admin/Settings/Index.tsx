@@ -20,7 +20,7 @@ interface Settings {
     midtrans_fee_label: string;
 }
 
-export default function SettingIndex({ auth, settings }: PageProps<{ settings: Settings }>) {
+export default function SettingIndex({ auth, settings, isYayasan }: PageProps<{ settings: Settings, isYayasan: boolean }>) {
     const userRoles = auth.user.roles || [];
     const isSuperAdmin = userRoles.includes('Super Admin');
 
@@ -130,8 +130,9 @@ export default function SettingIndex({ auth, settings }: PageProps<{ settings: S
 
     // Check logs on mount to see if an update is already in progress
     useEffect(() => {
+        if (!isYayasan) return;
         fetchLogs(true);
-    }, [fetchLogs]);
+    }, [fetchLogs, isYayasan]);
 
     useEffect(() => {
         let interval: NodeJS.Timeout;
@@ -218,17 +219,19 @@ export default function SettingIndex({ auth, settings }: PageProps<{ settings: S
                                                 {errors.school_phone && <p className="text-red-500 text-xs mt-1">{errors.school_phone}</p>}
                                             </div>
 
-                                            <div>
-                                                <label className="block font-bold text-gray-700 dark:text-gray-300 mb-2">Alamat Titimangsa (Untuk Laporan/PDF)</label>
-                                                <input 
-                                                    type="text"
-                                                    value={data.report_location}
-                                                    onChange={e => setData('report_location', e.target.value)}
-                                                    className="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
-                                                    placeholder="Contoh: Tasikmalaya"
-                                                />
-                                                {errors.report_location && <p className="text-red-500 text-xs mt-1">{errors.report_location}</p>}
-                                            </div>
+                                            {isYayasan && (
+                                                <div>
+                                                    <label className="block font-bold text-gray-700 dark:text-gray-300 mb-2">Alamat Titimangsa (Untuk Laporan/PDF)</label>
+                                                    <input 
+                                                        type="text"
+                                                        value={data.report_location}
+                                                        onChange={e => setData('report_location', e.target.value)}
+                                                        className="w-full rounded-xl border-gray-200 dark:border-gray-700 dark:bg-gray-900 dark:text-white"
+                                                        placeholder="Contoh: Tasikmalaya"
+                                                    />
+                                                    {errors.report_location && <p className="text-red-500 text-xs mt-1">{errors.report_location}</p>}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div>
@@ -267,35 +270,37 @@ export default function SettingIndex({ auth, settings }: PageProps<{ settings: S
                                             </div>
                                         </div>
 
-                                        <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
-                                            <label className="block font-bold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
-                                                <PhotoIcon className="w-4 h-4" />
-                                                Favicon Website
-                                            </label>
-                                            
-                                            <div className="flex items-center gap-6">
-                                                {settings.school_favicon && (
-                                                    <div className="w-16 h-16 rounded-2xl overflow-hidden border bg-white flex items-center justify-center p-2">
-                                                        <img src={settings.school_favicon} alt="Favicon" className="max-w-full max-h-full object-contain" />
+                                        {isYayasan && (
+                                            <div className="p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                                                <label className="block font-bold text-gray-700 dark:text-gray-300 mb-4 flex items-center gap-2">
+                                                    <PhotoIcon className="w-4 h-4" />
+                                                    Favicon Website
+                                                </label>
+                                                
+                                                <div className="flex items-center gap-6">
+                                                    {settings.school_favicon && (
+                                                        <div className="w-16 h-16 rounded-2xl overflow-hidden border bg-white flex items-center justify-center p-2">
+                                                            <img src={settings.school_favicon} alt="Favicon" className="max-w-full max-h-full object-contain" />
+                                                        </div>
+                                                    )}
+                                                    <div className="flex-1">
+                                                        <input 
+                                                            type="file"
+                                                            onChange={e => setData('school_favicon', e.target.files ? e.target.files[0] : null)}
+                                                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+                                                        />
+                                                        <p className="text-xs text-gray-400 mt-2">Maksimal 1MB (ICO, PNG, SVG) - Rekomendasi 512x512</p>
+                                                        {errors.school_favicon && <p className="text-red-500 text-xs mt-1">{errors.school_favicon}</p>}
                                                     </div>
-                                                )}
-                                                <div className="flex-1">
-                                                    <input 
-                                                        type="file"
-                                                        onChange={e => setData('school_favicon', e.target.files ? e.target.files[0] : null)}
-                                                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-                                                    />
-                                                    <p className="text-xs text-gray-400 mt-2">Maksimal 1MB (ICO, PNG, SVG) - Rekomendasi 512x512</p>
-                                                    {errors.school_favicon && <p className="text-red-500 text-xs mt-1">{errors.school_favicon}</p>}
                                                 </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
                                 </div>
 
 
 
-                                {isSuperAdmin && (
+                                {isYayasan && (
                                     <div className="pt-8 mt-8 border-t dark:border-gray-700">
                                         <h3 className="text-lg font-bold flex items-center gap-2 mb-6 text-slate-800 dark:text-slate-200">
                                             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>
@@ -342,7 +347,7 @@ export default function SettingIndex({ auth, settings }: PageProps<{ settings: S
                     </div>
 
                     {/* System Update Section */}
-                    {isSuperAdmin && (
+                    {isYayasan && (
                         <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-8">
                             <div className="p-8">
                                 <h3 className="text-lg font-bold flex items-center gap-2 mb-6 text-red-600 dark:text-red-400">
@@ -397,7 +402,7 @@ export default function SettingIndex({ auth, settings }: PageProps<{ settings: S
                     )}
 
                     {/* Database Maintenance Section */}
-                    {isSuperAdmin && (
+                    {isYayasan && (
                         <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mt-8">
                             <div className="p-8 space-y-8">
                                 <h3 className="text-lg font-bold flex items-center gap-2 text-indigo-600 dark:text-indigo-400">
@@ -410,7 +415,7 @@ export default function SettingIndex({ auth, settings }: PageProps<{ settings: S
                                     <div className="bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 flex flex-col justify-between">
                                         <div>
                                             <h4 className="font-bold text-sm text-gray-800 dark:text-gray-200 flex items-center gap-2 mb-2">
-                                                <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+                                                <svg className="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4-4m0 0l-4-4m4 4V4" /></svg>
                                                 Cadangkan Database (Backup)
                                             </h4>
                                             <p className="text-xs text-gray-500 mb-6">

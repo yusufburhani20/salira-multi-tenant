@@ -26,12 +26,24 @@ class Setting extends Model
         return 'app_settings_school_' . ($id ?? 'global');
     }
 
-    /**
-     * Resolusi school_id dari auth user yang sedang login.
-     */
     protected static function resolveSchoolId(): ?int
     {
-        return auth()->hasUser() ? auth()->user()->school_id : null;
+        if (!auth()->hasUser()) {
+            return null;
+        }
+
+        $user = auth()->user();
+
+        // Jika user adalah Super Admin Yayasan (tidak punya school_id bawaan)
+        if ($user->hasRole('Super Admin') && (!isset($user->school_id) || $user->school_id === null)) {
+            $sessionSchoolId = session('active_school_id');
+            if ($sessionSchoolId) {
+                return (int) $sessionSchoolId;
+            }
+            return null;
+        }
+
+        return $user->school_id;
     }
 
     /**

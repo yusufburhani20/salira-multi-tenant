@@ -21,6 +21,12 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // ── School Context Switching ─────────────────────────────────────────────
+    // Digunakan oleh guru yang mengajar di lebih dari 1 sekolah.
+    Route::get('/school/select', [\App\Http\Controllers\SchoolContextController::class, 'show'])->name('school.select');
+    Route::post('/school/switch', [\App\Http\Controllers\SchoolContextController::class, 'switch'])->name('school.switch');
+    Route::post('/school/reset', [\App\Http\Controllers\SchoolContextController::class, 'reset'])->name('school.reset');
+
     // ── Super Admin Yayasan Only ── Manajemen Sekolah ─────────────────────────
     Route::middleware(['role:Super Admin'])->prefix('admin')->name('admin.')->group(function () {
         Route::get('/schools', [\App\Http\Controllers\Admin\SchoolController::class, 'index'])->name('schools.index');

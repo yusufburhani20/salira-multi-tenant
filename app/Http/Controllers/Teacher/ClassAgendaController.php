@@ -31,7 +31,7 @@ class ClassAgendaController extends Controller
     {
         $semesterId = $this->resolveActiveSemesterIntoRequest($request);
 
-        $query = ClassAgenda::with('academicClass');
+        $query = ClassAgenda::whereHas('academicClass')->with('academicClass');
         if (!Auth::user()->hasAnyRole(['Super Admin', 'Kepala Sekolah', 'Staff/TU'])) {
             $query->where('teacher_id', Auth::id());
         }

@@ -71,7 +71,7 @@ class StudentResumeController extends Controller
             $q->wherePivot('is_active', true)->with('academicYear');
         }]);
 
-        $semesters = Semester::with('academicYear')
+        $semesters = Semester::whereHas('academicYear')->with('academicYear')
             ->get()
             ->map(function($sem) {
                 return [

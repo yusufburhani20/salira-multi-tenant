@@ -20,7 +20,7 @@ class UserController extends Controller
     use HasSchoolScope;
     public function index()
     {
-        $users = User::with('roles')->latest()->get();
+        $users = User::with(['roles', 'schoolAssignments'])->latest()->get();
         $roles = Role::pluck('name');
         
         $statuses = [];
@@ -44,15 +44,22 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'nip' => $request->nip === '-' ? null : $request->nip,
+            'phone' => $request->phone === '-' ? null : $request->phone,
+        ]);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
-            'nip' => ['nullable', 'string', 'max:50', \Illuminate\Validation\Rule::unique('users', 'nip')->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $this->schoolId())],
-            'phone' => ['nullable', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users', 'phone')->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $this->schoolId())],
+            'nip' => 'nullable|string|max:50|unique:users,nip',
+            'phone' => 'nullable|string|max:20|unique:users,phone',
             'telegram_id' => 'nullable|string|max:100',
             'status' => ['required', Rule::enum(UserStatus::class)],
             'roles' => 'nullable|array',
             'school_id' => 'nullable|exists:schools,id',
+            'additional_school_ids' => 'nullable|array',
+            'additional_school_ids.*' => 'exists:schools,id',
         ]);
 
         $schoolId = $this->schoolId();
@@ -75,20 +82,34 @@ class UserController extends Controller
             $user->syncRoles($request->roles);
         }
 
+        if ($request->has('additional_school_ids') && auth()->user()->hasRole('Super Admin')) {
+            $validSchoolIds = array_filter($request->additional_school_ids, fn($id) => $id != $user->school_id);
+            foreach ($validSchoolIds as $sid) {
+                $user->schoolAssignments()->create(['school_id' => $sid]);
+            }
+        }
+
         return back()->with('success', 'User created successfully with default password "password".');
     }
 
     public function update(Request $request, User $user)
     {
+        $request->merge([
+            'nip' => $request->nip === '-' ? null : $request->nip,
+            'phone' => $request->phone === '-' ? null : $request->phone,
+        ]);
+
         $request->validate([
             'name' => 'required|string|max:255',
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
-            'nip' => ['nullable', 'string', 'max:50', \Illuminate\Validation\Rule::unique('users', 'nip')->ignore($user->id)->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $user->school_id)],
-            'phone' => ['nullable', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users', 'phone')->ignore($user->id)->where('school_id', auth()->user()->hasRole('Super Admin') ? $request->school_id : $user->school_id)],
+            'nip' => ['nullable', 'string', 'max:50', \Illuminate\Validation\Rule::unique('users', 'nip')->ignore($user->id)],
+            'phone' => ['nullable', 'string', 'max:20', \Illuminate\Validation\Rule::unique('users', 'phone')->ignore($user->id)],
             'telegram_id' => 'nullable|string|max:100',
             'status' => ['required', Rule::enum(UserStatus::class)],
             'roles' => 'nullable|array',
             'school_id' => 'nullable|exists:schools,id',
+            'additional_school_ids' => 'nullable|array',
+            'additional_school_ids.*' => 'exists:schools,id',
         ]);
 
         $updateData = [
@@ -108,6 +129,14 @@ class UserController extends Controller
 
         if ($request->has('roles')) {
             $user->syncRoles($request->roles);
+        }
+
+        if (auth()->user()->hasRole('Super Admin') && $request->has('additional_school_ids')) {
+            $validSchoolIds = array_filter($request->additional_school_ids, fn($id) => $id != $user->school_id);
+            $user->schoolAssignments()->whereNotIn('school_id', $validSchoolIds)->delete();
+            foreach ($validSchoolIds as $sid) {
+                $user->schoolAssignments()->firstOrCreate(['school_id' => $sid]);
+            }
         }
         
         if ($request->reset_password_default) {

@@ -62,6 +62,19 @@ class AuthenticatedSessionController extends Controller
             'last_login_ip' => $request->ip(),
         ]);
 
+        $user = $request->user();
+
+        // Jika user multi-school dan belum pilih sekolah aktif,
+        // arahkan ke halaman pemilihan sekolah terlebih dahulu.
+        if ($user->isMultiSchool() && ! session('active_school_id')) {
+            return redirect()->route('school.select');
+        }
+
+        // Single-school user: set active_school_id ke sekolah utama jika belum ada
+        if (! session('active_school_id') && $user->school_id) {
+            session(['active_school_id' => $user->school_id]);
+        }
+
         return redirect()->intended(route('dashboard', absolute: false));
     }
 

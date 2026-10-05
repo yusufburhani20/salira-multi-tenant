@@ -35,7 +35,7 @@ class Setting extends Model
         $user = auth()->user();
 
         // Jika user adalah Super Admin Yayasan (tidak punya school_id bawaan)
-        if ($user->hasRole('Super Admin') && (!isset($user->school_id) || $user->school_id === null)) {
+        if (method_exists($user, 'hasRole') && $user->hasRole('Super Admin') && (!isset($user->school_id) || $user->school_id === null)) {
             $sessionSchoolId = session('active_school_id');
             if ($sessionSchoolId) {
                 return (int) $sessionSchoolId;

@@ -37,7 +37,7 @@ trait HasSchoolScope
         // Super Admin Yayasan (tidak punya school_id bawaan).
         // Tetapi jika dia sedang switch ke suatu sekolah (ada active_school_id),
         // maka contextnya adalah sekolah tersebut. Jika tidak, maka null (global).
-        if ($user->hasRole('Super Admin') && (!isset($user->school_id) || $user->school_id === null)) {
+        if (method_exists($user, 'hasRole') && $user->hasRole('Super Admin') && (!isset($user->school_id) || $user->school_id === null)) {
             $sessionSchoolId = session('active_school_id');
             if ($sessionSchoolId) {
                 return (int) $sessionSchoolId;

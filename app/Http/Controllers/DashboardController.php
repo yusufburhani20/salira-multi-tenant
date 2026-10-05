@@ -22,7 +22,7 @@ class DashboardController extends Controller
     use HasSchoolScope;
     public function index(Request $request)
     {
-        if ($request->user()->hasRole('Kepala Sekolah')) {
+        if (method_exists($request->user(), 'hasRole') && $request->user()->hasRole('Kepala Sekolah')) {
             return redirect()->route('admin.leader-dashboard');
         }
 

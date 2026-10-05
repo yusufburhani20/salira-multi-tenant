@@ -256,31 +256,16 @@ Route::middleware('auth')->group(function () {
         Route::get('events/{event}/export-pdf', [\App\Http\Controllers\Admin\EventController::class, 'exportPdf'])->name('events.export-pdf');
         Route::resource('events', \App\Http\Controllers\Admin\EventController::class);
         Route::get('events/{event}/attendances', [\App\Http\Controllers\Admin\EventController::class, 'attendances'])->name('events.attendances');
+        
+        // Attendance Sessions (Jadwal Presensi)
+        Route::resource('attendance-sessions', \App\Http\Controllers\Admin\AttendanceSessionController::class)->except(['create', 'show', 'edit']);
     });
 
     // Staff / User Routes
-    Route::get('/attendances/scanner', function (Illuminate\Http\Request $request) {
-        $todayAttendance = \App\Models\Attendance::where('user_id', $request->user()->id)
-            ->whereDate('date', today())
-            ->first();
-        $geofences = \App\Models\Geofence::where('is_active', true)->get();
-        
-        $permissions = $request->user()->permissionRequests()->with('addressedTo')->latest()->get();
-        $types = [];
-        foreach(\App\Enums\PermissionType::cases() as $case) {
-            $types[] = ['value' => $case->value, 'label' => $case->label()];
-        }
-        $approvers = \App\Models\User::role('Kepala Sekolah')->get(['id', 'name']);
-        
-        return Inertia::render('User/Attendances/Scanner', [
-            'todayAttendance' => $todayAttendance,
-            'geofences' => $geofences,
-            'permissions' => $permissions,
-            'types' => $types,
-            'approvers' => $approvers,
-        ]);
-    })->name('attendances.scanner');
+    Route::get('/attendances/scanner', [\App\Http\Controllers\StaffAttendanceController::class, 'scanner'])->name('attendances.scanner');
+    Route::post('/attendances/log', [\App\Http\Controllers\StaffAttendanceController::class, 'storeLog'])->name('attendances.log');
     
+    // Legacy routes for fallback (if needed)
     Route::post('/attendances/check-in', [\App\Http\Controllers\AttendanceController::class, 'checkIn'])->name('attendances.check-in');
     Route::post('/attendances/check-out', [\App\Http\Controllers\AttendanceController::class, 'checkOut'])->name('attendances.check-out');
     Route::get('/attendances/history', [\App\Http\Controllers\AttendanceController::class, 'history'])->name('attendances.history');

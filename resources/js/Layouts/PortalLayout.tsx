@@ -301,9 +301,29 @@ export default function PortalLayout({ header, children }: PropsWithChildren<{ h
                 </header>
 
                 {/* Main page content */}
-                <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-slate-50/50">
+                <main className="flex-1 p-4 sm:p-6 lg:p-8 bg-slate-50 dark:bg-slate-900 transition-colors pb-24 lg:pb-8">
                     {children}
                 </main>
+
+                {/* BOTTOM NAVIGATION (MOBILE) */}
+                <nav className="lg:hidden fixed bottom-0 w-full z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl border-t border-slate-200 dark:border-slate-700 pb-[env(safe-area-inset-bottom)]">
+                    <div className="flex justify-around items-center h-16 px-2">
+                        {navGroups[0].items.map((item) => (
+                            <Link 
+                                key={item.label}
+                                href={item.href}
+                                className={`flex flex-col items-center justify-center gap-1 min-w-[56px] min-h-[44px] py-1 transition-colors ${
+                                    item.active ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100'
+                                }`}
+                            >
+                                <div className={`flex-shrink-0 flex items-center justify-center ${item.active ? 'bg-blue-100 dark:bg-blue-900/40 rounded-full px-3 py-0.5' : ''}`}>
+                                    {item.icon}
+                                </div>
+                                <span className="text-[10px] tracking-tight">{item.label.split(' ')[0]}</span>
+                            </Link>
+                        ))}
+                    </div>
+                </nav>
 
                 {/* Toasts */}
                 {toast && (

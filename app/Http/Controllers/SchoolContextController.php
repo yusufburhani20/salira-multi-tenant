@@ -21,7 +21,7 @@ class SchoolContextController extends Controller
         $user = $request->user();
 
         // Single-school user tidak butuh picker, redirect ke dashboard
-        if (! $user->isMultiSchool()) {
+        if (!method_exists($user, 'isMultiSchool') || ! $user->isMultiSchool()) {
             // Set session ke sekolah utama jika belum ada
             if (! session('active_school_id') && $user->school_id) {
                 session(['active_school_id' => $user->school_id]);
@@ -30,13 +30,13 @@ class SchoolContextController extends Controller
         }
 
         // Ambil semua sekolah yang bisa diakses user ini
-        $schools = $user->allSchools()->map(fn($school) => [
+        $schools = method_exists($user, 'allSchools') ? $user->allSchools()->map(fn($school) => [
             'id'          => $school->id,
             'name'        => $school->name,
             'type'        => $school->type,
             'logo'        => $school->logo ? asset('storage/' . $school->logo) : null,
             'is_primary'  => $school->id === $user->school_id,
-        ]);
+        ]) : collect();
 
         return Inertia::render('Auth/SelectSchool', [
             'schools'           => $schools,
@@ -60,7 +60,8 @@ class SchoolContextController extends Controller
         $schoolId = (int) $request->school_id;
 
         // Guard: pastikan user punya akses ke sekolah yang diminta
-        if (! $user->hasRole('Super Admin') && ! $user->hasAccessToSchool($schoolId)) {
+        $isSuperAdmin = method_exists($user, 'hasRole') && $user->hasRole('Super Admin');
+        if (! $isSuperAdmin && (!method_exists($user, 'hasAccessToSchool') || ! $user->hasAccessToSchool($schoolId))) {
             return back()->with('error', 'Anda tidak memiliki akses ke sekolah tersebut.');
         }
 

@@ -32,7 +32,62 @@ class SaliraApp extends StatelessWidget {
         useMaterial3: true,
         fontFamily: 'Inter',
       ),
-      home: const LoginScreen(),
+      home: const AuthCheck(),
+    );
+  }
+}
+
+class AuthCheck extends StatefulWidget {
+  const AuthCheck({super.key});
+
+  @override
+  State<AuthCheck> createState() => _AuthCheckState();
+}
+
+class _AuthCheckState extends State<AuthCheck> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLoginStatus();
+  }
+
+  Future<void> _checkLoginStatus() async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('auth_token');
+    
+    // Memberikan waktu agar sistem memuat dan transisi terlihat halus
+    await Future.delayed(const Duration(milliseconds: 300));
+
+    if (mounted) {
+      if (token != null && token.isNotEmpty) {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const DashboardScreen(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) => const LoginScreen(),
+            transitionDuration: Duration.zero,
+            reverseTransitionDuration: Duration.zero,
+          ),
+        );
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      backgroundColor: Color(0xFF0037B0),
+      body: Center(
+        child: CircularProgressIndicator(color: Colors.white),
+      ),
     );
   }
 }
@@ -86,10 +141,17 @@ class _LoginScreenState extends State<LoginScreen> {
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final token = data['access_token'];
+        final user = data['user'];
 
-        // Simpan token
+        // Simpan token dan data user
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString('auth_token', token);
+        
+        if (user != null) {
+          await prefs.setString('user_name', user['name'] ?? '');
+          await prefs.setString('user_role', user['role'] ?? (user['nisn'] != null ? 'siswa' : 'guru'));
+          await prefs.setString('user_identifier', user['nisn'] ?? user['email'] ?? '');
+        }
 
         // Pindah ke Dashboard
         if (mounted) {
@@ -100,7 +162,16 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } else {
         setState(() {
-          _errorMessage = 'Login gagal. Periksa kembali kredensial Anda.';
+          try {
+            final errorData = jsonDecode(response.body);
+            if (errorData['errors'] != null && errorData['errors']['identifier'] != null) {
+              _errorMessage = errorData['errors']['identifier'][0];
+            } else {
+              _errorMessage = errorData['message'] ?? 'Login gagal. Periksa kembali kredensial Anda.';
+            }
+          } catch (e) {
+            _errorMessage = 'Login gagal. Periksa kembali kredensial Anda.';
+          }
         });
       }
     } catch (e) {

@@ -23,6 +23,7 @@ Route::prefix('v1')->group(function () {
     // Protected routes
     Route::middleware('auth:sanctum')->group(function () {
         Route::get('/me', [AuthController::class, 'me']);
+        Route::post('/update-profile', [AuthController::class, 'updateProfile']);
         Route::post('/logout', [AuthController::class, 'logout']);
         Route::post('/device-token', [DeviceTokenController::class, 'store']);
 
@@ -32,19 +33,25 @@ Route::prefix('v1')->group(function () {
         // Presensi Diri Sendiri (Pegawai / Siswa)
         Route::get('/attendance', [AttendanceController::class, 'index']);
         Route::get('/attendance/today', [AttendanceController::class, 'today']);
-        Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']);
+        Route::post('/attendance/check-in', [AttendanceController::class, 'checkIn']); // Legacy
+        Route::get('/attendance/sessions', [AttendanceController::class, 'sessions']); // New Multi-Session
+        Route::post('/attendance/log', [AttendanceController::class, 'storeLog']); // New Multi-Session Log
 
         // Manajemen Presensi Murid (Khusus Guru/Pegawai)
         Route::get('/students/attendance', [StudentAttendanceController::class, 'index']);
         Route::post('/students/attendance', [StudentAttendanceController::class, 'store']);
 
         // Perizinan (Leave Requests)
+        Route::get('/leaves/form-data', [LeaveController::class, 'getFormData']);
         Route::get('/leaves', [LeaveController::class, 'index']);
         Route::post('/leaves', [LeaveController::class, 'store']);
         Route::delete('/leaves/{id}', [LeaveController::class, 'destroy']);
 
         // Jurnal Mengajar / Agenda Kelas
+        Route::get('/agendas/export/excel', [\App\Http\Controllers\Teacher\ClassAgendaController::class, 'exportExcel']);
+        Route::get('/agendas/export/pdf', [\App\Http\Controllers\Teacher\ClassAgendaController::class, 'exportPdf']);
         Route::get('/agendas/form-data', [AgendaController::class, 'getClasses']);
+        Route::get('/agendas/booked-periods', [AgendaController::class, 'getBookedPeriods']);
         Route::get('/agendas/{id}/students', [AgendaController::class, 'getStudents']);
         Route::get('/agendas/{id}', [AgendaController::class, 'show']);
         Route::get('/agendas', [AgendaController::class, 'index']);

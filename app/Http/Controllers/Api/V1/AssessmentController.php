@@ -44,7 +44,6 @@ class AssessmentController extends Controller
             'academic_class_id' => 'required|exists:academic_classes,id',
             'subject_id'        => 'required|exists:subjects,id',
             'date'              => 'required|date',
-            'type'              => 'required|string',
             'title'             => 'required|string|max:255',
             'kkm'               => 'nullable|integer|min:0|max:100',
             'scores'            => 'required|array|min:1',
@@ -60,7 +59,6 @@ class AssessmentController extends Controller
                 'academic_class_id' => $validated['academic_class_id'],
                 'subject_id'        => $validated['subject_id'],
                 'date'              => $validated['date'],
-                'type'              => $validated['type'],
                 'title'             => $validated['title'],
                 'kkm'               => $validated['kkm'] ?? null,
             ]);
@@ -98,7 +96,6 @@ class AssessmentController extends Controller
         return response()->json([
             'classes'  => AcademicClass::all(['id', 'name']),
             'subjects' => Subject::orderBy('name')->get(['id', 'name']),
-            'types'    => ['Tugas', 'Ulangan Harian', 'Kuis', 'Praktik', 'Lainnya'],
         ]);
     }
 
@@ -108,7 +105,6 @@ class AssessmentController extends Controller
 
         $validated = $request->validate([
             'date'              => 'required|date',
-            'type'              => 'required|string',
             'title'             => 'required|string|max:255',
             'kkm'               => 'nullable|integer|min:0|max:100',
             'scores'            => 'nullable|array',
@@ -121,7 +117,6 @@ class AssessmentController extends Controller
         try {
             $assessment->update([
                 'date'  => $validated['date'],
-                'type'  => $validated['type'],
                 'title' => $validated['title'],
                 'kkm'   => $validated['kkm'] ?? null,
             ]);
@@ -159,12 +154,16 @@ class AssessmentController extends Controller
             'id'                => $a->id,
             'date'              => $a->date,
             'title'             => $a->title,
-            'type'              => $a->type,
             'kkm'               => $a->kkm,
             'class_name'        => $a->academicClass?->name,
-            'subject_name'      => $a->subject?->name,
+            'subject_name'      => $a->getRelationValue('subject') ? $a->getRelationValue('subject')->name : $a->subject,
             'academic_class_id' => $a->academic_class_id,
             'subject_id'        => $a->subject_id,
+            'scores'            => $a->scores?->map(fn($s) => [
+                'student_id' => $s->student_id,
+                'score'      => $s->score,
+                'notes'      => $s->notes
+            ]),
             'scores_count'      => $a->scores?->count() ?? 0,
             'average_score'     => $a->scores?->avg('score') ? round($a->scores->avg('score'), 1) : null,
         ];

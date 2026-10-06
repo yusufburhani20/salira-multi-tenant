@@ -189,7 +189,7 @@ class FinalAssessmentController extends Controller
             'type'              => $a->type,
             'kkm'               => $a->kkm,
             'class_name'        => $a->academicClass?->name,
-            'subject_name'      => $a->subject?->name,
+            'subject_name'      => $a->getRelationValue('subject') ? $a->getRelationValue('subject')->name : $a->subject,
             'academic_class_id' => $a->academic_class_id,
             'subject_id'        => $a->subject_id,
             'scores'            => $a->scores?->map(fn($s) => [

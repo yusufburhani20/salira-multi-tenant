@@ -25,6 +25,8 @@ export default function UpdateProfileInformation({
             phone: string;
             telegram_id: string;
             nip: string;
+            gender: string;
+            address: string;
             avatar: File | null;
         }>({
             _method: 'patch',
@@ -33,6 +35,8 @@ export default function UpdateProfileInformation({
             phone: user.phone || '',
             telegram_id: user.telegram_id || '',
             nip: user.nip || '',
+            gender: user.gender || 'Laki-laki',
+            address: user.address || '',
             avatar: null,
         });
 
@@ -128,6 +132,32 @@ export default function UpdateProfileInformation({
                         autoComplete="off"
                     />
                     <InputError className="mt-2" message={errors.nip} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="gender" value="Jenis Kelamin" />
+                    <select
+                        id="gender"
+                        className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                        value={data.gender}
+                        onChange={(e) => setData('gender', e.target.value)}
+                    >
+                        <option value="Laki-laki">Laki-laki</option>
+                        <option value="Perempuan">Perempuan</option>
+                    </select>
+                    <InputError className="mt-2" message={errors.gender as string} />
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="address" value="Alamat Lengkap" />
+                    <textarea
+                        id="address"
+                        className="mt-1 block w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-600 focus:ring-indigo-500 dark:focus:ring-indigo-600 rounded-md shadow-sm"
+                        value={data.address}
+                        onChange={(e) => setData('address', e.target.value)}
+                        rows={3}
+                    />
+                    <InputError className="mt-2" message={errors.address as string} />
                 </div>
 
                 <div>

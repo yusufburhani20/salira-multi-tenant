@@ -19,6 +19,9 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
+            'nip' => $this->nip ?? null,
+            'address' => $this->address ?? null,
+            'gender' => $this->gender ?? 'Laki-laki',
             'status' => $this->status,
             'roles' => $this->roles->pluck('name')->toArray(),
             'contexts' => [

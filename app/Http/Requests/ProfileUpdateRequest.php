@@ -29,6 +29,7 @@ class ProfileUpdateRequest extends FormRequest
             'phone' => ['nullable', 'string', 'max:20'],
             'telegram_id' => ['nullable', 'string', 'max:100'],
             'nip' => ['nullable', 'string', 'max:50'],
+            'gender' => ['nullable', 'string', 'in:Laki-laki,Perempuan'],
             'address' => ['nullable', 'string', 'max:500'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];

@@ -238,7 +238,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                _buildStatusCircle('Hadir', '06:45', Colors.green),
+                _buildStatusCircle('Hadir', '--:--', Colors.grey),
                 _buildStatusCircle('Pulang', '--:--', Colors.grey),
                 _buildStatusCircle('Izin', '0', Colors.orange),
               ],
@@ -247,24 +247,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.shade50,
+                color: Colors.red.shade50,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.green.shade100),
+                border: Border.all(color: Colors.red.shade100),
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
-                    child: const Icon(Icons.check, color: Colors.white, size: 16),
+                    decoration: const BoxDecoration(color: Colors.red, shape: BoxShape.circle),
+                    child: const Icon(Icons.close, color: Colors.white, size: 16),
                   ),
                   const SizedBox(width: 12),
                   const Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('Anda sudah melakukan presensi masuk.', style: TextStyle(fontSize: 12, color: Colors.green, fontWeight: FontWeight.bold)),
-                        Text('Lokasi: Gerbang Utama Sekolah', style: TextStyle(fontSize: 11, color: Colors.black54)),
+                        Text('Anda belum melakukan presensi hari ini.', style: TextStyle(fontSize: 12, color: Colors.red, fontWeight: FontWeight.bold)),
+                        Text('Silakan ketuk tombol Scan QR di bawah.', style: TextStyle(fontSize: 11, color: Colors.black54)),
                       ],
                     ),
                   )
